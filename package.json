@@ -1,0 +1,11 @@
+{
+  "name": "constructorioid",
+  "version": "1.0.0",
+  "description": "Idetity management for Constructorio JavaScript clients",
+  "main": "index.js",
+  "scripts": {
+    "test": "mocha"
+  },
+  "author": "",
+  "license": "ISC"
+}
