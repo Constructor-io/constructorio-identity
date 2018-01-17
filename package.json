@@ -11,6 +11,6 @@
     "test": "CONSTRUCTORIOAB_BASE_URL=http://localhost:5000 mocha spec/"
   },
   "devDependencies": {
-   "mocha": "^3.1.0"
+    "mocha": "^3.1.0"
   }
 }
