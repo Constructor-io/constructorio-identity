@@ -16,5 +16,8 @@ SIXPACK_CONFIG=./config.yml bin/sixpack
 Back in this repo, run the following command
 
 ```bash
-npm run mocha
+npm run test
 ```
+
+# Releasing to Production
+This module does not release to production on its own
