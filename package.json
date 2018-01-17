@@ -12,9 +12,12 @@
     "test": "CONSTRUCTORIOAB_BASE_URL=http://localhost:5000 mocha spec/"
   },
   "devDependencies": {
+    "babel-eslint": "^8.0.1",
+    "chai": "^3.5.0",
     "eslint": "^4.9.0",
     "eslint-config-airbnb-base": "^12.1.0",
     "eslint-plugin-import": "^2.7.0",
-    "mocha": "^3.1.0"
+    "mocha": "^3.1.0",
+    "sinon": "^2.1.0"
   }
 }
