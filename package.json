@@ -1,10 +1,16 @@
 {
-  "name": "constructorioid",
+  "name": "constructorio-id",
   "version": "1.0.0",
-  "description": "Idetity management for Constructorio JavaScript clients",
+  "description": "Idetity management for javascript clients (autocomplete/search)",
+  "homepage": "https://github.com/constructor-io/cdn",
+  "author": "Zubin Tiku (constructor.io)",
+  "license": "MIT",
   "scripts": {
-    "test": "CONSTRUCTORIOAB_BASE_URL=http://localhost:5000 mocha mocha/"
+    "clean": "rm -rf node_modules",
+    "format": "eslint --fix ",
+    "test": "CONSTRUCTORIOAB_BASE_URL=http://localhost:5000 mocha spec/"
   },
-  "author": "",
-  "license": "ISC"
+  "devDependencies": {
+   "mocha": "^3.1.0"
+  }
 }
