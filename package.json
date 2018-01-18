@@ -9,6 +9,8 @@
     "clean": "rm -rf node_modules",
     "format": "eslint --fix ",
     "lint": "eslint bin spec/*.js src/*js",
+    "coverage": "CONSTRUCTORIOAB_BASE_URL=http://localhost:5000 nyc --reporter=html mocha spec/",
+    "postcoverage": "http-server coverage",
     "test": "CONSTRUCTORIOAB_BASE_URL=http://localhost:5000 mocha spec/"
   },
   "devDependencies": {
@@ -17,7 +19,9 @@
     "eslint": "^4.9.0",
     "eslint-config-airbnb-base": "^12.1.0",
     "eslint-plugin-import": "^2.7.0",
+    "http-server": "^0.8.5",
     "mocha": "^3.1.0",
+    "nyc": "^11.4.1",
     "sinon": "^2.1.0"
   }
 }
