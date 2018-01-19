@@ -3,10 +3,7 @@
   "env": {                           // http://eslint.org/docs/user-guide/configuring.html#specifying-environments
     "browser": true,                 // browser global variables
     "node": true,                    // node global variables and node specific rules
-    "jasmine": true                  // jasmine global variables
-  },
-  "globals" : {
-    "ConstructorioAutocomplete": true
+    "mocha": true                    // mocha global variables
   },
   "parser": "babel-eslint",          // https://github.com/babel/babel-eslint
   "plugins": [ ],
@@ -117,9 +114,6 @@
     "quotes": [                      // http://eslint.org/docs/rules/quotes
       2, "single", "avoid-escape"
     ],
-    "camelcase": [2, {               // http://eslint.org/docs/rules/camelcase
-      "properties": "never"
-    }],
     "comma-spacing": [2, {           // http://eslint.org/docs/rules/comma-spacing
       "before": false,
       "after": true

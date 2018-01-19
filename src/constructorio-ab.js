@@ -2,18 +2,10 @@
   // Object.assign polyfill from https://developer.mozilla.org/en/docs/Web/JavaScript/Reference/Global_Objects/Object/assign#Polyfill
   Object.assign || Object.defineProperty(Object, 'assign', {enumerable: !1, configurable: !0, writable: !0, value: function (e) {'use strict'; if (void 0 === e || e === null) throw new TypeError('Cannot convert first argument to object'); for (var r = Object(e), t = 1; t < arguments.length; t++) {var n = arguments[t]; if (void 0 !== n && n !== null) {n = Object(n); for (var o = Object.keys(Object(n)), a = 0, c = o.length; c > a; a++) {var i = o[a], b = Object.getOwnPropertyDescriptor(n, i); void 0 !== b && b.enumerable && (r[i] = n[i]);}}} return r;}});
 
-  var ConstructorioAB = {
-    base_url: 'https://ab.cnstrc.com',
-    ip_address: null,
-    user_agent: null,
-    timeout: 2000,
-    persist: true,
-    cookie_name: 'ConstructorioAB_client_id',
-    cookie_prefix_for_experiment: 'ConstructorioAB_experiment_',
-    cookie_domain: null
-  };
+  var ConstructorioAB = {};
+  var counter = 0;
 
-    // check if on node, else expose on browser's global window object
+  // check if on node, else expose on browser's global window object
   var on_node = false;
   if (typeof window === 'undefined') {
     on_node = true;
@@ -21,50 +13,19 @@
     window.ConstructorioAB = ConstructorioAB;
   }
 
-  ConstructorioAB.set_cookie = function (name, value) {
-    if (!on_node && this.persist) {
-      var cookie_data = name + '=' + value + '; expires=Tue, 19 Jan 2038 03:14:07 GMT; path=/';
-      if (this.cookie_domain) {
-        cookie_data += '; domain=' + this.cookie_domain;
-      }
-      document.cookie = cookie_data;
-    }
-  };
-
-  ConstructorioAB.get_cookie = function (name) {
-    var cookieName = name + '=';
-    var decodedCookie = decodeURIComponent(document.cookie);
-    var cookieBits = decodedCookie.split(';');
-    for (var i = 0; i < cookieBits.length; i++) {
-      var thisCookie = cookieBits[i];
-      while (thisCookie.charAt(0) == ' ') { // remove leading spaces
-        thisCookie = thisCookie.substring(1);
-      }
-      if (thisCookie.indexOf(cookieName) == 0) {
-        return thisCookie.substring(cookieName.length, thisCookie.length);
-      }
-    }
-    return '';
-  };
-
-  ConstructorioAB.generate_client_id = function () {
-    // from http://stackoverflow.com/questions/105034
-    var client_id = 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function (c) {
-      var r = Math.random() * 16 | 0, v = c == 'x' ? r : (r & 0x3 | 0x8);
-      return v.toString(16);
-    });
-    this.set_cookie(this.cookie_name, client_id);
-    return client_id;
-  };
-
-  ConstructorioAB.persisted_client_id = function () {
-    // http://stackoverflow.com/questions/5639346/shortest-function-for-reading-a-cookie-in-javascript
-    var result;
-    return (result = new RegExp('(?:^|; )' + encodeURIComponent(this.cookie_name) + '=([^;]*)').exec(document.cookie)) ? (result[1]) : null;
-  };
-
   ConstructorioAB.Session = function (options) {
-    Object.assign(this, ConstructorioAB, options);
+    var defaults = {
+      base_url: 'https://ab.cnstrc.com',
+      ip_address: null,
+      user_agent: null,
+      timeout: 2000,
+      persist: true,
+      cookie_name: 'ConstructorioAB_client_id',
+      cookie_prefix_for_experiment: 'ConstructorioAB_experiment_',
+      cookie_domain: null
+    };
+
+    Object.assign(this, defaults, options);
 
     if (!this.client_id) {
       if (this.persist && !on_node) {
@@ -79,136 +40,176 @@
     }
   };
 
-  ConstructorioAB.Session.prototype = {
-    participate: function (experiment_name, alternatives, traffic_fraction, force, callback) {
-      if (typeof traffic_fraction === 'function') {
-        callback = traffic_fraction;
-        traffic_fraction = null;
-        force = null;
-      } else if (typeof traffic_fraction === 'string') {
-        callback = force;
-        force = traffic_fraction;
-        traffic_fraction = null;
+  ConstructorioAB.Session.prototype.set_cookie = function (name, value) {
+    if (!on_node && this.persist) {
+      var cookie_data = name + '=' + value + '; expires=Tue, 19 Jan 2038 03:14:07 GMT; path=/';
+      if (this.cookie_domain) {
+        cookie_data += '; domain=' + this.cookie_domain;
       }
-      if (typeof force === 'function') {
-        callback = force;
-        force = null;
-      }
-
-      if (!callback) {
-        throw new Error('Callback is not specified');
-      }
-
-      if (!experiment_name || !(/^[a-z0-9][a-z0-9\-_ ]*$/).test(experiment_name)) {
-        return callback(new Error('Bad experiment_name'));
-      }
-
-      if (alternatives.length < 2) {
-        return callback(new Error('Must specify at least 2 alternatives'));
-      }
-
-      for (var i = 0; i < alternatives.length; i += 1) {
-        if (!(/^[a-z0-9][a-z0-9\-_ ]*$/).test(alternatives[i])) {
-          return callback(new Error('Bad alternative name: ' + alternatives[i]));
-        }
-      }
-      var params = {client_id: this.client_id,
-        experiment: experiment_name,
-        alternatives: alternatives};
-      if (!on_node && force == null) {
-        var regex = new RegExp('[\\?&]ConstructorioAB-force-' + experiment_name + '=([^&#]*)');
-        var results = regex.exec(window.location.search);
-        if (results != null) {
-          force = decodeURIComponent(results[1].replace(/\+/g, ' '));
-        }
-      }
-      if (traffic_fraction !== null && !isNaN(traffic_fraction)) {
-        params.traffic_fraction = traffic_fraction;
-      }
-      if (force != null && _in_array(alternatives, force)) {
-        return callback(null, {'status': 'ok', 'alternative': {'name': force}, 'experiment': {'version': 0, 'name': experiment_name}, 'client_id': this.client_id});
-      }
-      if (this.ip_address) {
-        params.ip_address = this.ip_address;
-      }
-      if (this.user_agent) {
-        params.user_agent = this.user_agent;
-      }
-
-      var experiment_cookie_name = this.cookie_prefix_for_experiment + experiment_name;
-      var alternative_name = this.get_cookie(experiment_cookie_name);
-      if (alternative_name && alternatives.indexOf(alternative_name) > -1) {
-        var res = {
-          status: 'ok',
-          alternative: {
-            name: alternative_name
-          },
-          experiment: {
-            name: experiment_name
-          },
-          client_id: this.client_id
-        };
-        return callback(null, res);
-      }
-
-      var t0 = new Date().getTime();
-      var that = this;
-      return _request(this.base_url + '/participate', params, this.timeout, function (err, res) {
-        if (err) {
-          res = {status: 'failed',
-            error: err,
-            alternative: {name: alternatives[0]}};
-          _request(that.base_url + '/', { 'participate-fail': 1 }, that.timeout, function () {});
-        } else if (Math.random() < 0.01) {
-          var t1 = new Date().getTime();
-          _request(that.base_url + '/', { 'participate-time': t1 - t0 }, that.timeout, function () {});
-        }
-        ConstructorioAB.set_cookie(experiment_cookie_name, res.alternative.name);
-        return callback(null, res);
-      });
-    },
-    convert: function (experiment_name, kpi, callback) {
-      if (typeof kpi === 'function') {
-        callback = kpi;
-        kpi = null;
-      }
-
-      if (!callback) {
-        callback = function (err) {
-          if (err && console && console.error) {
-            console.error(err);
-          }
-        };
-      }
-
-      if (!experiment_name || !(/^[a-z0-9][a-z0-9\-_ ]*$/).test(experiment_name)) {
-        return callback(new Error('Bad experiment_name'));
-      }
-
-      var params = {client_id: this.client_id,
-        experiment: experiment_name};
-      if (this.ip_address) {
-        params.ip_address = this.ip_address;
-      }
-      if (this.user_agent) {
-        params.user_agent = this.user_agent;
-      }
-      if (kpi) {
-        params.kpi = kpi;
-      }
-      return _request(this.base_url + '/convert', params, this.timeout, function (err, res) {
-        if (err) {
-          res = {status: 'failed',
-            error: err};
-        }
-        return callback(null, res);
-      });
+      document.cookie = cookie_data;
     }
   };
 
-  var counter = 0;
+  ConstructorioAB.Session.prototype.get_cookie = function (name) {
+    var cookieName = name + '=';
+    var decodedCookie = decodeURIComponent(document.cookie);
+    var cookieBits = decodedCookie.split(';');
+    for (var i = 0; i < cookieBits.length; i++) {
+      var thisCookie = cookieBits[i];
+      while (thisCookie.charAt(0) === ' ') { // remove leading spaces
+        thisCookie = thisCookie.substring(1);
+      }
+      if (thisCookie.indexOf(cookieName) === 0) {
+        return thisCookie.substring(cookieName.length, thisCookie.length);
+      }
+    }
+    return '';
+  };
 
-  var _request = function (uri, params, timeout, callback) {
+  ConstructorioAB.Session.prototype.generate_client_id = function () {
+    // from http://stackoverflow.com/questions/105034
+    var client_id = 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function (c) {
+      var r = Math.random() * 16 | 0;
+      var v = c === 'x' ? r : (r & 0x3 | 0x8);
+      return v.toString(16);
+    });
+    this.set_cookie(this.cookie_name, client_id);
+    return client_id;
+  };
+
+  ConstructorioAB.Session.prototype.persisted_client_id = function () {
+    // http://stackoverflow.com/questions/5639346/shortest-function-for-reading-a-cookie-in-javascript
+    var result;
+    return (result = new RegExp('(?:^|; )' + encodeURIComponent(this.cookie_name) + '=([^;]*)').exec(document.cookie)) ? (result[1]) : null;
+  };
+
+  ConstructorioAB.Session.prototype.participate = function (experiment_name, alternatives, traffic_fraction, force, callback) {
+    if (typeof traffic_fraction === 'function') {
+      callback = traffic_fraction;
+      traffic_fraction = null;
+      force = null;
+    } else if (typeof traffic_fraction === 'string') {
+      callback = force;
+      force = traffic_fraction;
+      traffic_fraction = null;
+    }
+    if (typeof force === 'function') {
+      callback = force;
+      force = null;
+    }
+
+    if (!callback) {
+      throw new Error('Callback is not specified');
+    }
+
+    if (!experiment_name || !(/^[a-z0-9][a-z0-9\-_ ]*$/).test(experiment_name)) {
+      return callback(new Error('Bad experiment_name'));
+    }
+
+    if (alternatives.length < 2) {
+      return callback(new Error('Must specify at least 2 alternatives'));
+    }
+
+    for (var i = 0; i < alternatives.length; i += 1) {
+      if (!(/^[a-z0-9][a-z0-9\-_ ]*$/).test(alternatives[i])) {
+        return callback(new Error('Bad alternative name: ' + alternatives[i]));
+      }
+    }
+    var params = {client_id: this.client_id,
+      experiment: experiment_name,
+      alternatives: alternatives};
+    if (!on_node && force === null) {
+      var regex = new RegExp('[\\?&]ConstructorioAB-force-' + experiment_name + '=([^&#]*)');
+      var results = regex.exec(window.location.search);
+      if (results !== null) {
+        force = decodeURIComponent(results[1].replace(/\+/g, ' '));
+      }
+    }
+    if (traffic_fraction !== null && !isNaN(traffic_fraction)) {
+      params.traffic_fraction = traffic_fraction;
+    }
+    if (force !== null && this._in_array(alternatives, force)) {
+      return callback(null, {'status': 'ok', 'alternative': {'name': force}, 'experiment': {'version': 0, 'name': experiment_name}, 'client_id': this.client_id});
+    }
+    if (this.ip_address) {
+      params.ip_address = this.ip_address;
+    }
+    if (this.user_agent) {
+      params.user_agent = this.user_agent;
+    }
+
+    var experiment_cookie_name = this.cookie_prefix_for_experiment + experiment_name;
+    var alternative_name = this.get_cookie(experiment_cookie_name);
+    if (alternative_name && alternatives.indexOf(alternative_name) > -1) {
+      var res = {
+        status: 'ok',
+        alternative: {
+          name: alternative_name
+        },
+        experiment: {
+          name: experiment_name
+        },
+        client_id: this.client_id
+      };
+      return callback(null, res);
+    }
+
+    var t0 = new Date().getTime();
+    var that = this;
+    return that._request(this.base_url + '/participate', params, this.timeout, function (err, res) {
+      if (err) {
+        res = {status: 'failed',
+          error: err,
+          alternative: {name: alternatives[0]}};
+        that._request(that.base_url + '/', { 'participate-fail': 1 }, that.timeout, function () {});
+      } else if (Math.random() < 0.01) {
+        var t1 = new Date().getTime();
+        that._request(that.base_url + '/', { 'participate-time': t1 - t0 }, that.timeout, function () {});
+      }
+      ConstructorioAB.set_cookie(experiment_cookie_name, res.alternative.name);
+      return callback(null, res);
+    });
+  };
+
+  ConstructorioAB.Session.prototype.convert = function (experiment_name, kpi, callback) {
+    if (typeof kpi === 'function') {
+      callback = kpi;
+      kpi = null;
+    }
+
+    if (!callback) {
+      callback = function (err) {
+        if (err && console && console.error) {
+          console.error(err);
+        }
+      };
+    }
+
+    if (!experiment_name || !(/^[a-z0-9][a-z0-9\-_ ]*$/).test(experiment_name)) {
+      return callback(new Error('Bad experiment_name'));
+    }
+
+    var params = {client_id: this.client_id,
+      experiment: experiment_name};
+    if (this.ip_address) {
+      params.ip_address = this.ip_address;
+    }
+    if (this.user_agent) {
+      params.user_agent = this.user_agent;
+    }
+    if (kpi) {
+      params.kpi = kpi;
+    }
+    return this._request(this.base_url + '/convert', params, this.timeout, function (err, res) {
+      if (err) {
+        res = {status: 'failed',
+          error: err};
+      }
+      return callback(null, res);
+    });
+  };
+
+  ConstructorioAB.Session.prototype._request = function (uri, params, timeout, callback) {
     var timed_out = false;
     var timeout_handle = setTimeout(function () {
       timed_out = true;
@@ -225,9 +226,9 @@
         }
       };
     }
-    var url = _request_uri(uri, params);
+    var url = this._request_uri(uri, params);
     if (!on_node) {
-      script = document.createElement('script');
+      var script = document.createElement('script');
       script.type = 'text/javascript';
       script.src = url;
       script.async = true;
@@ -241,7 +242,7 @@
         });
         return res.on('end', function () {
           var data;
-          if (res.statusCode == 500) {
+          if (res.statusCode === 500) {
             data = {status: 'failed', response: body};
           } else {
             data = JSON.parse(body);
@@ -261,7 +262,7 @@
     }
   };
 
-  var _request_uri = function (endpoint, params) {
+  ConstructorioAB.Session.prototype._request_uri = function (endpoint, params) {
     var query_string = [];
     var e = encodeURIComponent;
     for (var key in params) {
@@ -276,12 +277,12 @@
       }
     }
     if (query_string.length) {
-      endpoint += '?' + query_string.join('&');
+      return endpoint + '?' + query_string.join('&');
     }
     return endpoint;
   };
 
-  var _in_array = function (a, v) {
+  ConstructorioAB.Session.prototype._in_array = function (a, v) {
     for (var i = 0; i < a.length; i++) {
       if (a[i] === v) {
         return true;
@@ -290,7 +291,7 @@
     return false;
   };
 
-    // export module for node or environments with module loaders, such as webpack
+  // export module for node or environments with module loaders, such as webpack
   if (typeof module !== 'undefined' && typeof require !== 'undefined') {
     module.exports = ConstructorioAB;
   }
