@@ -53,33 +53,60 @@ describe('ConstructorioAB.Session', function () {
   });
 
   describe('when used in browser', function () {
-    before(function () {
+    beforeEach(function () {
       var dom = new jsdom.JSDOM();
       global.window = dom.window;
       global.document = dom.window.document;
     });
 
-    after(function () {
+    afterEach(function () {
       delete global.window;
       delete global.document;
     });
 
-    it('should read and set the client id from cookie', function () {
-
+    it('should read the client id from cookie', function () {
+      document.cookie = 'dummyname=dummyid; expires=Tue, 19 Jan 2038 03:14:07 GMT; path=/';
+      var session = new ConstructorioAB.Session({ cookie_name: 'dummyname' });
+      expect(session.client_id).to.equal('dummyid');
     });
 
-    it('should read and set the user agent', function () {
+    it('should set the client id if missing', function () {
+      var session = new ConstructorioAB.Session({ cookie_name: 'missingname' });
+      expect(session.client_id).to.be.a.string;
+      expect(session.client_id).to.match(/(\w|d|-){36}/);
+    });
 
+    it('should set the user agent', function () {
+      var session = new ConstructorioAB.Session();
+      expect(session.user_agent).to.match(/jsdom/);
+    });
+
+    it('should set node status to false', function () {
+      var session = new ConstructorioAB.Session();
+      expect(session.on_node).to.be.false;
     });
   });
 
   describe('when used in node', function () {
-    it('should generate the client id if missing', function() {
-
+    it('should use the client id if in options', function () {
+      var session = new ConstructorioAB.Session({ client_id: 'dummyid' });
+      expect(session.client_id).to.equal('dummyid');
     });
 
-    it('should use the client id if in options', function() {
+    it('should generate the client id if missing', function () {
+      var session = new ConstructorioAB.Session();
+      expect(session.client_id).to.be.a.string;
+      expect(session.client_id).to.match(/(\w|d|-){36}/);
+    });
 
+    it('should not set the user agent', function () {
+      var session = new ConstructorioAB.Session();
+      expect(session.user_agent).to.be.null;
+    });
+
+    it('should set node status to true', function () {
+      var session = new ConstructorioAB.Session();
+      expect(session.on_node).to.be.true;
     });
   });
 });
