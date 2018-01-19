@@ -5,14 +5,6 @@
   var ConstructorioAB = {};
   var counter = 0;
 
-  // check if on node, else expose on browser's global window object
-  var on_node = false;
-  if (typeof window === 'undefined') {
-    on_node = true;
-  } else {
-    window.ConstructorioAB = ConstructorioAB;
-  }
-
   ConstructorioAB.Session = function (options) {
     var defaults = {
       base_url: 'https://ab.cnstrc.com',
@@ -22,26 +14,27 @@
       persist: true,
       cookie_name: 'ConstructorioAB_client_id',
       cookie_prefix_for_experiment: 'ConstructorioAB_experiment_',
-      cookie_domain: null
+      cookie_domain: null,
+      on_node: typeof window === 'undefined'
     };
 
     Object.assign(this, defaults, options);
 
     if (!this.client_id) {
-      if (this.persist && !on_node) {
+      if (!this.on_node && this.persist) {
         var persisted_id = this.persisted_client_id();
         this.client_id = persisted_id !== null ? persisted_id : this.generate_client_id();
       } else {
         this.client_id = this.generate_client_id();
       }
     }
-    if (!on_node) {
+    if (!this.on_node) {
       this.user_agent = this.user_agent || (window && window.navigator && window.navigator.userAgent);
     }
   };
 
   ConstructorioAB.Session.prototype.set_cookie = function (name, value) {
-    if (!on_node && this.persist) {
+    if (!this.on_node && this.persist) {
       var cookie_data = name + '=' + value + '; expires=Tue, 19 Jan 2038 03:14:07 GMT; path=/';
       if (this.cookie_domain) {
         cookie_data += '; domain=' + this.cookie_domain;
@@ -118,7 +111,7 @@
     var params = {client_id: this.client_id,
       experiment: experiment_name,
       alternatives: alternatives};
-    if (!on_node && force === null) {
+    if (!this.on_node && force === null) {
       var regex = new RegExp('[\\?&]ConstructorioAB-force-' + experiment_name + '=([^&#]*)');
       var results = regex.exec(window.location.search);
       if (results !== null) {
@@ -216,7 +209,7 @@
       return callback(new Error('request timed out'));
     }, timeout);
 
-    if (!on_node) {
+    if (!this.on_node) {
       var cb = 'callback' + (++counter);
       params.callback = 'ConstructorioAB.' + cb;
       ConstructorioAB[cb] = function (res) {
@@ -227,7 +220,7 @@
       };
     }
     var url = this._request_uri(uri, params);
-    if (!on_node) {
+    if (!this.on_node) {
       var script = document.createElement('script');
       script.type = 'text/javascript';
       script.src = url;

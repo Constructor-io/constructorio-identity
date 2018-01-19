@@ -2,16 +2,13 @@ var assert = require('chai').assert;
 var expect = require('chai').expect;
 var sinon  = require('sinon');
 var jsdom = require('jsdom');
-
-var dom = new jsdom.JSDOM();
-global.window = dom.window;
-global.document = dom.window.document;
-
 var ConstructorioAB = require('../src/constructorio-ab.js');
 
 describe('ConstructorioAB', function () {
-
   before(function () {
+    var dom = new jsdom.JSDOM();
+    global.window = dom.window;
+    global.document = dom.window.document;
     ConstructorioAB.Session.prototype.get_cookie = sinon.stub().returns('trolled');
     ConstructorioAB.Session.prototype.set_cookie = sinon.stub();
   });
