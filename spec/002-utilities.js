@@ -45,6 +45,10 @@ describe('ConstructorioAB.Session', function () {
 
   });
 
+  describe('_request_uri', function () {
+
+  });
+
   describe('_in_array', function () {
 
   });
