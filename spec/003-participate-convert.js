@@ -60,12 +60,6 @@ describe('ConstructorioAB', function () {
     });
   });
 
-  it('should auto generate a client_id', function (done) {
-    var session = new ConstructorioAB.Session();
-    expect(session.client_id.length).to.equal(36);
-    done();
-  });
-
   it('should return ok for convert', function (done) {
     var session = new ConstructorioAB.Session();
     session.client_id = 'mike';
