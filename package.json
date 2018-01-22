@@ -5,6 +5,9 @@
   "homepage": "https://github.com/constructor-io/cdn",
   "author": "Zubin Tiku (constructor.io)",
   "license": "MIT",
+  "nyc": {
+    "exclude": ["spec"]
+  },
   "scripts": {
     "clean": "rm -rf node_modules",
     "format": "eslint --fix ",
