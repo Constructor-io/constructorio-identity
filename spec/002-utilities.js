@@ -57,10 +57,38 @@ describe('ConstructorioAB.Session', function () {
   });
 
   describe('_request_uri', function () {
+    it('should return the endpoint without params', function () {
+      var session = new ConstructorioAB.Session();
+      var uri = session._request_uri('www.end.com/point');
+      expect(uri).to.equal('www.end.com/point');
+    });
 
+    it('should return the endpoint with empty params', function () {
+      var session = new ConstructorioAB.Session();
+      var uri = session._request_uri('www.end.com/point', {});
+      expect(uri).to.equal('www.end.com/point');
+    });
+
+    it('should return the endpoint + querystring with params', function () {
+      var session = new ConstructorioAB.Session();
+      var uri = session._request_uri('www.end.com/point', { p1: 'yo', p2: 'mtvraps' });
+      expect(uri).to.equal('www.end.com/point?p1=yo&p2=mtvraps');
+    });
   });
 
   describe('_in_array', function () {
+    it('should return true if the item is in the array', function () {
+      var session = new ConstructorioAB.Session();
+      var array = ['a', 'b'];
+      var value = session._in_array(array, 'b');
+      expect(value).to.be.true;
+    });
 
+    it('should return false if the item is not in the array', function () {
+      var session = new ConstructorioAB.Session();
+      var array = ['a', 'b'];
+      var value = session._in_array(array, 'c');
+      expect(value).to.be.false;
+    });
   });
 });
