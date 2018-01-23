@@ -221,7 +221,7 @@
       script.src = url;
       script.async = true;
       document.body.appendChild(script);
-    } else {
+    } else if (SERVER_ENABLED) {
       var http = require('http');
       var req = http.get(url, function (res) {
         var body = '';

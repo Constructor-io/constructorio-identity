@@ -5,6 +5,9 @@
     "node": true,                    // node global variables and node specific rules
     "mocha": true                    // mocha global variables
   },
+  "globals" : {
+    "SERVER_ENABLED": true
+  },
   "parser": "babel-eslint",          // https://github.com/babel/babel-eslint
   "plugins": [ ],
   "rules": {
