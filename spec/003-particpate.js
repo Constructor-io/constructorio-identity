@@ -154,5 +154,25 @@ describe('ConstructorioAB.Session', function () {
         done();
       });
     });
+
+    it('should not request an alternative when using force from the querystring', function (done) {
+      var dom = new jsdom.JSDOM('', { url: 'http://h1b.io/welcome?ConstructorioAB-force-show-bieber=trolled' });
+      global.window = dom.window;
+      global.document = dom.window.document;
+      var session = new ConstructorioAB.Session();
+      var request = sinon.stub(ConstructorioAB.Session.prototype, '_request').callsFake(function fakeFn(uri, params, timeout, callback) {
+        callback(null);
+      });
+
+      session.participate('show-bieber', ['trolled', 'not-trolled'], function (err, resp) {
+        expect(err).to.be.null;
+        expect(resp.status).to.equal('ok');
+        expect(resp.alternative.name).to.match(/trolled/);
+        expect(resp.experiment.name).to.match(/show-bieber/);
+        expect(request.called).to.be.false;
+        request.restore();
+        done();
+      });
+    });
   });
 });
