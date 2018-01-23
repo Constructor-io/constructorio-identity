@@ -1,5 +1,6 @@
 var expect = require('chai').expect;
 var jsdom = require('jsdom');
+var sinon  = require('sinon');
 var ConstructorioAB = require('../src/constructorio-ab.js');
 
 describe('ConstructorioAB.Session', function () {
@@ -37,23 +38,43 @@ describe('ConstructorioAB.Session', function () {
 
     it('should return ok for convert', function (done) {
       var session = new ConstructorioAB.Session();
-      session.client_id = 'mike';
-      session.participate('show-bieber', ['trolled', 'not-trolled'], function (err, resp) {
-        session.convert('show-bieber', function (err, resp) {
-          expect(resp.status).to.equal('ok');
-          done();
-        });
+      var request = sinon.stub(ConstructorioAB.Session.prototype, '_request').callsFake(function fakeFn(uri, params, timeout, callback) {
+        callback(null, { status: 'ok' });
+      });
+      var requestParams = {
+        client_id: session.client_id,
+        experiment: 'show-bieber'
+      };
+
+      session.convert('show-bieber', function (err, resp) {
+        expect(err).to.be.null;
+        expect(resp.status).to.equal('ok');
+        expect(request.called).to.be.true;
+        expect(request.getCall(0).args[1]).to.deep.equal(requestParams);
+        request.restore();
+        done();
       });
     });
 
     it('should return ok for convert with kpi', function (done) {
-      var session = new ConstructorioAB.Session();
-      session.client_id = 'mike';
-      session.participate('show-bieber', ['trolled', 'not-trolled'], function (err, resp) {
-        session.convert('show-bieber', function (err, resp) {
-          expect(resp.status).to.equal('ok');
-          done();
-        });
+      var session = new ConstructorioAB.Session({ ip_address: '1.1.1.1' });
+      var request = sinon.stub(ConstructorioAB.Session.prototype, '_request').callsFake(function fakeFn(uri, params, timeout, callback) {
+        callback(null, { status: 'ok' });
+      });
+      var requestParams = {
+        client_id: session.client_id,
+        experiment: 'show-bieber',
+        ip_address: '1.1.1.1',
+        kpi: 'paparazzi shot'
+      };
+
+      session.convert('show-bieber', 'paparazzi shot', function (err, resp) {
+        expect(err).to.be.null;
+        expect(resp.status).to.equal('ok');
+        expect(request.called).to.be.true;
+        expect(request.getCall(0).args[1]).to.deep.equal(requestParams);
+        request.restore();
+        done();
       });
     });
   });

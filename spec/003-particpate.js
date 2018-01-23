@@ -1,6 +1,6 @@
 var expect = require('chai').expect;
-var sinon  = require('sinon');
 var jsdom = require('jsdom');
+var sinon  = require('sinon');
 var ConstructorioAB = require('../src/constructorio-ab.js');
 
 describe('ConstructorioAB.Session', function () {
@@ -85,15 +85,16 @@ describe('ConstructorioAB.Session', function () {
     });
 
     it('should request an alternative with no cookie', function (done) {
-      var session = new ConstructorioAB.Session();
+      var session = new ConstructorioAB.Session({ ip_address: '1.1.1.1' });
       var request = sinon.stub(ConstructorioAB.Session.prototype, '_request').callsFake(function fakeFn(uri, params, timeout, callback) {
         callback(null, { status: 'ok', alternative: { name: 'trolled`' }, experiment: { name: 'show-bieber' } });
       });
       var requestParams = {
         client_id: session.client_id,
         experiment: 'show-bieber',
-        alternatives: [ 'trolled', 'not-trolled' ],
-        user_agent: 'Mozilla/5.0 (darwin) AppleWebKit/537.36 (KHTML, like Gecko) jsdom/11.5.1'
+        ip_address: '1.1.1.1',
+        user_agent: 'Mozilla/5.0 (darwin) AppleWebKit/537.36 (KHTML, like Gecko) jsdom/11.5.1',
+        alternatives: [ 'trolled', 'not-trolled' ]
       };
 
       session.participate('show-bieber', ['trolled', 'not-trolled'], function (err, resp) {
@@ -116,9 +117,9 @@ describe('ConstructorioAB.Session', function () {
       var requestParams = {
         client_id: session.client_id,
         experiment: 'show-bieber-fraction',
-        alternatives: [ 'trolled', 'not-trolled' ],
         traffic_fraction: 0.1,
-        user_agent: 'Mozilla/5.0 (darwin) AppleWebKit/537.36 (KHTML, like Gecko) jsdom/11.5.1'
+        user_agent: 'Mozilla/5.0 (darwin) AppleWebKit/537.36 (KHTML, like Gecko) jsdom/11.5.1',
+        alternatives: [ 'trolled', 'not-trolled' ]
       };
 
       session.participate('show-bieber-fraction', ['trolled', 'not-trolled'], 0.1, function (err, resp) {
