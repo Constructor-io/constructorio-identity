@@ -5,7 +5,7 @@ var ConstructorioAB = require('../src/constructorio-ab.js');
 
 describe('ConstructorioAB.Session', function () {
   describe('convert', function () {
-    before(function () {
+    beforeEach(function () {
       var dom = new jsdom.JSDOM();
       global.window = dom.window;
       global.document = dom.window.document;
@@ -43,7 +43,8 @@ describe('ConstructorioAB.Session', function () {
       });
       var requestParams = {
         client_id: session.client_id,
-        experiment: 'show-bieber'
+        experiment: 'show-bieber',
+        user_agent: 'Mozilla/5.0 (darwin) AppleWebKit/537.36 (KHTML, like Gecko) jsdom/11.5.1'
       };
 
       session.convert('show-bieber', function (err, resp) {
@@ -65,7 +66,8 @@ describe('ConstructorioAB.Session', function () {
         client_id: session.client_id,
         experiment: 'show-bieber',
         ip_address: '1.1.1.1',
-        kpi: 'paparazzi shot'
+        kpi: 'paparazzi shot',
+        user_agent: 'Mozilla/5.0 (darwin) AppleWebKit/537.36 (KHTML, like Gecko) jsdom/11.5.1'
       };
 
       session.convert('show-bieber', 'paparazzi shot', function (err, resp) {
