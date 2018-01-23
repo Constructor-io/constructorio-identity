@@ -159,7 +159,7 @@
         var t1 = new Date().getTime();
         that._request(that.base_url + '/', { 'participate-time': t1 - t0 }, that.timeout, function () {});
       }
-      ConstructorioAB.set_cookie(experiment_cookie_name, res.alternative.name);
+      that.set_cookie(experiment_cookie_name, res.alternative.name);
       return callback(null, res);
     });
   };

@@ -1,6 +1,4 @@
-var assert = require('chai').assert;
 var expect = require('chai').expect;
-var sinon  = require('sinon');
 var jsdom = require('jsdom');
 var ConstructorioAB = require('../src/constructorio-ab.js');
 
@@ -10,13 +8,11 @@ describe('ConstructorioAB.Session', function () {
       var dom = new jsdom.JSDOM();
       global.window = dom.window;
       global.document = dom.window.document;
-      ConstructorioAB.Session.prototype.get_cookie = sinon.stub().returns('trolled');
-      ConstructorioAB.Session.prototype.set_cookie = sinon.stub();
     });
 
-    after(function () {
-      ConstructorioAB.Session.prototype.get_cookie.restore();
-      ConstructorioAB.Session.prototype.set_cookie.restore();
+    afterEach(function () {
+      delete global.window;
+      delete global.document;
     });
 
     it('should return ok for convert', function (done) {
@@ -74,7 +70,7 @@ describe('ConstructorioAB.Session', function () {
     it('should not allow bad experiment names', function (done) {
       var session = new ConstructorioAB.Session();
       session.participate('%%', ['trolled', 'not-trolled'], function (err, alt) {
-        assert.equal(alt, null);
+        expect(alt).to.be.null;
         expect(err).instanceof(Error);
         done();
       });

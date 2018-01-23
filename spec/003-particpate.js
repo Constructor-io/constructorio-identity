@@ -1,4 +1,3 @@
-var assert = require('chai').assert;
 var expect = require('chai').expect;
 var sinon  = require('sinon');
 var jsdom = require('jsdom');
@@ -6,25 +5,55 @@ var ConstructorioAB = require('../src/constructorio-ab.js');
 
 describe('ConstructorioAB.Session', function () {
   describe('particpate', function () {
-    before(function () {
+    beforeEach(function () {
       var dom = new jsdom.JSDOM();
       global.window = dom.window;
       global.document = dom.window.document;
-      ConstructorioAB.Session.prototype.get_cookie = sinon.stub().returns('trolled');
-      ConstructorioAB.Session.prototype.set_cookie = sinon.stub();
     });
 
-    after(function () {
-      ConstructorioAB.Session.prototype.get_cookie.restore();
-      ConstructorioAB.Session.prototype.set_cookie.restore();
+    afterEach(function () {
+      delete global.window;
+      delete global.document;
     });
 
-    it('should return an alternative for participate', function (done) {
+    it('should return an alternative with cookie', function (done) {
       var session = new ConstructorioAB.Session();
+      var request = sinon.stub(ConstructorioAB.Session.prototype, '_request').callsFake(function fakeFn(uri, params, timeout, callback) {
+        callback(null);
+      });
+      document.cookie = session.cookie_prefix_for_experiment + 'show-bieber=trolled; expires=Tue, 19 Jan 2038 03:14:07 GMT; path=/';
+
       session.participate('show-bieber', ['trolled', 'not-trolled'], function (err, resp) {
+        expect(err).to.be.null;
+        expect(resp.status).to.equal('ok');
         expect(resp.alternative.name).to.match(/trolled/);
-        expect(ConstructorioAB.Session.prototype.get_cookie.calledWithMatch('ConstructorioAB_experiment_show-bieber'));
-        expect(ConstructorioAB.Session.prototype.set_cookie.calledWithMatch('ConstructorioAB_experiment_show-bieber', /trolled/));
+        expect(resp.experiment.name).to.match(/show-bieber/);
+        expect(request.called).to.be.false;
+        request.restore();
+        done();
+      });
+    });
+
+    it('should request an alternative with no cookie', function (done) {
+      var session = new ConstructorioAB.Session();
+      var request = sinon.stub(ConstructorioAB.Session.prototype, '_request').callsFake(function fakeFn(uri, params, timeout, callback) {
+        callback(null, { status: 'ok', alternative: { name: 'trolled`' }, experiment: { name: 'show-bieber' } });
+      });
+      var requestParams = {
+        client_id: session.client_id,
+        experiment: 'show-bieber',
+        alternatives: [ 'trolled', 'not-trolled' ],
+        user_agent: 'Mozilla/5.0 (darwin) AppleWebKit/537.36 (KHTML, like Gecko) jsdom/11.5.1'
+      };
+
+      session.participate('show-bieber', ['trolled', 'not-trolled'], function (err, resp) {
+        expect(err).to.be.null;
+        expect(resp.status).to.equal('ok');
+        expect(resp.alternative.name).to.match(/trolled/);
+        expect(resp.experiment.name).to.match(/show-bieber/);
+        expect(request.called).to.be.true;
+        expect(request.getCall(0).args[1]).to.deep.equal(requestParams);
+        request.restore();
         done();
       });
     });
@@ -64,11 +93,11 @@ describe('ConstructorioAB.Session', function () {
     it('should not allow bad alternative names', function (done) {
       var session = new ConstructorioAB.Session();
       session.participate('show-bieber', ['trolled'], function (err, alt) {
-        assert.equal(alt, null);
+        expect(alt).to.be.null;
         expect(err).instanceof(Error);
 
         session.participate('show-bieber', ['trolled', '%%'], function (err, alt) {
-          assert.equal(alt, null);
+          expect(alt).to.be.null;
           expect(err).instanceof(Error);
           done();
         });
