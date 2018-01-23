@@ -91,4 +91,17 @@ describe('ConstructorioAB.Session', function () {
       expect(value).to.be.false;
     });
   });
+
+  describe('_request', function () {
+    it('should append a script tagu with a callback when run in browser', function (done) {
+      var session = new ConstructorioAB.Session();
+      session._request('www.www.www', { a: '1', b: '2' }, 1, function () {
+        expect(document.body.children.length).to.equal(1);
+        expect(document.body.children[0].type).to.match(/text\/javascript/);
+        expect(document.body.children[0].src).to.match(/www\.www\.www\?a=1&b=2&callback=ConstructorioAB/);
+        expect(document.body.children[0].async).to.be.true;
+        done();
+      });
+    });
+  });
 });
