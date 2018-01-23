@@ -95,10 +95,27 @@ describe('ConstructorioAB.Session', function () {
       });
     });
 
-    it('should return ok for participate with traffic_fraction', function (done) {
+    it('should request an alternative with no cookie an traffic fraction', function (done) {
       var session = new ConstructorioAB.Session();
+      var request = sinon.stub(ConstructorioAB.Session.prototype, '_request').callsFake(function fakeFn(uri, params, timeout, callback) {
+        callback(null, { status: 'ok', alternative: { name: 'trolled`' }, experiment: { name: 'show-bieber-fraction' } });
+      });
+      var requestParams = {
+        client_id: session.client_id,
+        experiment: 'show-bieber-fraction',
+        alternatives: [ 'trolled', 'not-trolled' ],
+        traffic_fraction: 0.1,
+        user_agent: 'Mozilla/5.0 (darwin) AppleWebKit/537.36 (KHTML, like Gecko) jsdom/11.5.1'
+      };
+
       session.participate('show-bieber-fraction', ['trolled', 'not-trolled'], 0.1, function (err, resp) {
+        expect(err).to.be.null;
         expect(resp.status).to.equal('ok');
+        expect(resp.alternative.name).to.match(/trolled/);
+        expect(resp.experiment.name).to.match(/show-bieber-fraction/);
+        expect(request.called).to.be.true;
+        expect(request.getCall(0).args[1]).to.deep.equal(requestParams);
+        request.restore();
         done();
       });
     });
