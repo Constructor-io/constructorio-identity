@@ -279,8 +279,8 @@
     return false;
   };
 
-  if (typeof window !== 'undefined') {}
-    window['ConstructorioAB'] = ConstructorioAB;
+  if (typeof window !== 'undefined') {
+    window.ConstructorioAB = ConstructorioAB;
   }
 
   // export module for node or environments with module loaders, such as webpack
