@@ -19,6 +19,7 @@ describe('ConstructorioAB.Session', function () {
     it('should return an error if zero alternatives are passed in', function (done) {
       var session = new ConstructorioAB.Session();
       session.participate('testing', [], function (err, resp) {
+        expect(err).instanceof(Error);
         expect(err.message).to.match(/^Must specify at least 2 alternatives$/);
         expect(resp).to.be.undefined;
         done();
@@ -28,6 +29,7 @@ describe('ConstructorioAB.Session', function () {
     it('should return an error if one alternative is passed in', function (done) {
       var session = new ConstructorioAB.Session();
       session.participate('testing', ['one'], function (err, resp) {
+        expect(err).instanceof(Error);
         expect(err.message).to.match(/^Must specify at least 2 alternatives$/);
         expect(resp).to.be.undefined;
         done();
@@ -38,6 +40,17 @@ describe('ConstructorioAB.Session', function () {
       var session = new ConstructorioAB.Session();
       session.participate('show-bieber', ['trolled', '%%'], function (err, resp) {
         expect(resp).to.be.undefined;
+        expect(err.message).to.match(/^Bad alternative name/);
+        expect(err).instanceof(Error);
+        done();
+      });
+    });
+
+    it('should return an error if the experiment has a bad name', function (done) {
+      var session = new ConstructorioAB.Session();
+      session.participate('%%', ['trolled', 'not-trolled'], function (err, resp) {
+        expect(resp).to.be.undefined;
+        expect(err.message).to.match(/^Bad experiment_name$/);
         expect(err).instanceof(Error);
         done();
       });

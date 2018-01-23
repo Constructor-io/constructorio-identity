@@ -171,11 +171,7 @@
     }
 
     if (!callback) {
-      callback = function (err) {
-        if (err && console && console.error) {
-          console.error(err);
-        }
-      };
+      throw new Error('Callback is not specified');
     }
 
     if (!experiment_name || !(/^[a-z0-9][a-z0-9\-_ ]*$/).test(experiment_name)) {
