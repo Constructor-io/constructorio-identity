@@ -2,10 +2,9 @@
   // Object.assign polyfill from https://developer.mozilla.org/en/docs/Web/JavaScript/Reference/Global_Objects/Object/assign#Polyfill
   Object.assign || Object.defineProperty(Object, 'assign', {enumerable: !1, configurable: !0, writable: !0, value: function (e) {'use strict'; if (void 0 === e || e === null) throw new TypeError('Cannot convert first argument to object'); for (var r = Object(e), t = 1; t < arguments.length; t++) {var n = arguments[t]; if (void 0 !== n && n !== null) {n = Object(n); for (var o = Object.keys(Object(n)), a = 0, c = o.length; c > a; a++) {var i = o[a], b = Object.getOwnPropertyDescriptor(n, i); void 0 !== b && b.enumerable && (r[i] = n[i]);}}} return r;}});
 
-  var ConstructorioAB = {};
   var counter = 0;
 
-  ConstructorioAB.Session = function (options) {
+  var ConstructorioAB = function (options) {
     var defaults = {
       base_url: 'https://ab.cnstrc.com',
       ip_address: null,
@@ -33,7 +32,7 @@
     }
   };
 
-  ConstructorioAB.Session.prototype.set_cookie = function (name, value) {
+  ConstructorioAB.prototype.set_cookie = function (name, value) {
     if (!this.on_node && this.persist) {
       var cookie_data = name + '=' + value + '; expires=Tue, 19 Jan 2038 03:14:07 GMT; path=/';
       if (this.cookie_domain) {
@@ -43,7 +42,7 @@
     }
   };
 
-  ConstructorioAB.Session.prototype.get_cookie = function (name) {
+  ConstructorioAB.prototype.get_cookie = function (name) {
     var cookieName = name + '=';
     var decodedCookie = decodeURIComponent(document.cookie);
     var cookieBits = decodedCookie.split(';');
@@ -59,7 +58,7 @@
     return '';
   };
 
-  ConstructorioAB.Session.prototype.generate_client_id = function () {
+  ConstructorioAB.prototype.generate_client_id = function () {
     // from http://stackoverflow.com/questions/105034
     var client_id = 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function (c) {
       var r = Math.random() * 16 | 0;
@@ -70,13 +69,13 @@
     return client_id;
   };
 
-  ConstructorioAB.Session.prototype.persisted_client_id = function () {
+  ConstructorioAB.prototype.persisted_client_id = function () {
     // http://stackoverflow.com/questions/5639346/shortest-function-for-reading-a-cookie-in-javascript
     var result;
     return (result = new RegExp('(?:^|; )' + encodeURIComponent(this.cookie_name) + '=([^;]*)').exec(document.cookie)) ? (result[1]) : null;
   };
 
-  ConstructorioAB.Session.prototype.participate = function (experiment_name, alternatives, traffic_fraction, force, callback) {
+  ConstructorioAB.prototype.participate = function (experiment_name, alternatives, traffic_fraction, force, callback) {
     if (typeof traffic_fraction === 'function') {
       callback = traffic_fraction;
       traffic_fraction = null;
@@ -164,7 +163,7 @@
     });
   };
 
-  ConstructorioAB.Session.prototype.convert = function (experiment_name, kpi, callback) {
+  ConstructorioAB.prototype.convert = function (experiment_name, kpi, callback) {
     if (typeof kpi === 'function') {
       callback = kpi;
       kpi = null;
@@ -198,7 +197,7 @@
     });
   };
 
-  ConstructorioAB.Session.prototype._request = function (uri, params, timeout, callback) {
+  ConstructorioAB.prototype._request = function (uri, params, timeout, callback) {
     var timed_out = false;
     var timeout_handle = setTimeout(function () {
       timed_out = true;
@@ -251,7 +250,7 @@
     }
   };
 
-  ConstructorioAB.Session.prototype._request_uri = function (endpoint, params) {
+  ConstructorioAB.prototype._request_uri = function (endpoint, params) {
     var query_string = [];
     var e = encodeURIComponent;
     for (var key in params) {
@@ -271,7 +270,7 @@
     return endpoint;
   };
 
-  ConstructorioAB.Session.prototype._in_array = function (a, v) {
+  ConstructorioAB.prototype._in_array = function (a, v) {
     for (var i = 0; i < a.length; i++) {
       if (a[i] === v) {
         return true;

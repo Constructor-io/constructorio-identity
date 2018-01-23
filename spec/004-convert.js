@@ -3,7 +3,7 @@ var jsdom = require('jsdom');
 var sinon  = require('sinon');
 var ConstructorioAB = require('../src/constructorio-ab.js');
 
-describe('ConstructorioAB.Session', function () {
+describe('ConstructorioAB', function () {
   describe('convert', function () {
     beforeEach(function () {
       var dom = new jsdom.JSDOM();
@@ -17,7 +17,7 @@ describe('ConstructorioAB.Session', function () {
     });
 
     it('should throw an error if no callback is defined', function (done) {
-      var session = new ConstructorioAB.Session();
+      var session = new ConstructorioAB();
       expect(function () {
         session.convert('show-bieber');
       }).to.throw(
@@ -27,7 +27,7 @@ describe('ConstructorioAB.Session', function () {
     });
 
     it('should return an error if an experiment has a bad name', function (done) {
-      var session = new ConstructorioAB.Session();
+      var session = new ConstructorioAB();
       session.convert('%%', function (err, resp) {
         expect(err).instanceof(Error);
         expect(err.message).to.match(/^Bad experiment_name$/);
@@ -37,8 +37,8 @@ describe('ConstructorioAB.Session', function () {
     });
 
     it('should return ok for convert', function (done) {
-      var session = new ConstructorioAB.Session();
-      var request = sinon.stub(ConstructorioAB.Session.prototype, '_request').callsFake(function fakeFn(uri, params, timeout, callback) {
+      var session = new ConstructorioAB();
+      var request = sinon.stub(ConstructorioAB.prototype, '_request').callsFake(function fakeFn(uri, params, timeout, callback) {
         callback(null, { status: 'ok' });
       });
       var requestParams = {
@@ -58,8 +58,8 @@ describe('ConstructorioAB.Session', function () {
     });
 
     it('should return ok for convert with kpi', function (done) {
-      var session = new ConstructorioAB.Session({ ip_address: '1.1.1.1' });
-      var request = sinon.stub(ConstructorioAB.Session.prototype, '_request').callsFake(function fakeFn(uri, params, timeout, callback) {
+      var session = new ConstructorioAB({ ip_address: '1.1.1.1' });
+      var request = sinon.stub(ConstructorioAB.prototype, '_request').callsFake(function fakeFn(uri, params, timeout, callback) {
         callback(null, { status: 'ok' });
       });
       var requestParams = {
@@ -81,8 +81,8 @@ describe('ConstructorioAB.Session', function () {
     });
 
     it('should return an error on failure', function (done) {
-      var session = new ConstructorioAB.Session();
-      var request = sinon.stub(ConstructorioAB.Session.prototype, '_request').callsFake(function fakeFn(uri, params, timeout, callback) {
+      var session = new ConstructorioAB();
+      var request = sinon.stub(ConstructorioAB.prototype, '_request').callsFake(function fakeFn(uri, params, timeout, callback) {
         callback(new Error('whoops'));
       });
 
