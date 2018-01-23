@@ -79,5 +79,20 @@ describe('ConstructorioAB.Session', function () {
         done();
       });
     });
+
+    it('should return an error on failure', function (done) {
+      var session = new ConstructorioAB.Session();
+      var request = sinon.stub(ConstructorioAB.Session.prototype, '_request').callsFake(function fakeFn(uri, params, timeout, callback) {
+        callback(new Error('whoops'));
+      });
+
+      session.convert('show-bieber', 'paparazzi shot', function (err, resp) {
+        expect(err).to.be.null;
+        expect(resp.status).to.equal('failed');
+        expect(resp.error.message).to.match(/whoops/);
+        request.restore();
+        done();
+      });
+    });
   });
 });

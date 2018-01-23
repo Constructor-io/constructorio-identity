@@ -134,6 +134,24 @@ describe('ConstructorioAB.Session', function () {
       });
     });
 
+    it('should issue a second request using particpate fail on failure', function (done) {
+      var session = new ConstructorioAB.Session({ ip_address: '1.1.1.1' });
+      var request = sinon.stub(ConstructorioAB.Session.prototype, '_request').callsFake(function fakeFn(uri, params, timeout, callback) {
+        callback(new Error('whoops'));
+      });
+
+      session.participate('show-bieber', ['trolled', 'not-trolled'], function (err, resp) {
+        expect(err).to.be.null;
+        expect(resp.status).to.equal('failed');
+        expect(resp.alternative.name).to.match(/trolled/);
+        expect(resp.error.message).to.match(/whoops/);
+        expect(request.calledTwice).to.be.true;
+        expect(request.getCall(1).args[1]['participate-fail']).to.be.a.number;
+        request.restore();
+        done();
+      });
+    });
+
     it('should override cookies when using force', function (done) {
       var session = new ConstructorioAB.Session();
       var request = sinon.stub(ConstructorioAB.Session.prototype, '_request').callsFake(function fakeFn(uri, params, timeout, callback) {
