@@ -95,7 +95,7 @@ describe('ConstructorioAB.Session', function () {
       });
     });
 
-    it('should request an alternative with no cookie an traffic fraction', function (done) {
+    it('should request an alternative with no cookie and traffic fraction', function (done) {
       var session = new ConstructorioAB.Session();
       var request = sinon.stub(ConstructorioAB.Session.prototype, '_request').callsFake(function fakeFn(uri, params, timeout, callback) {
         callback(null, { status: 'ok', alternative: { name: 'trolled`' }, experiment: { name: 'show-bieber-fraction' } });
@@ -120,27 +120,38 @@ describe('ConstructorioAB.Session', function () {
       });
     });
 
-    it('should return forced alternative for participate with force', function (done) {
+    it('should override cookies when using force', function (done) {
       var session = new ConstructorioAB.Session();
+      var request = sinon.stub(ConstructorioAB.Session.prototype, '_request').callsFake(function fakeFn(uri, params, timeout, callback) {
+        callback(null);
+      });
+      document.cookie = session.cookie_prefix_for_experiment + 'show-bieber=not-trolled; expires=Tue, 19 Jan 2038 03:14:07 GMT; path=/';
+
       session.participate('show-bieber', ['trolled', 'not-trolled'], 'trolled', function (err, resp) {
-        expect(resp.alternative.name).to.equal('trolled');
-        session.participate('show-bieber', ['trolled', 'not-trolled'], 'not-trolled', function (err, resp) {
-          expect(resp.alternative.name).to.equal('not-trolled');
-          done();
-        });
+        expect(err).to.be.null;
+        expect(resp.status).to.equal('ok');
+        expect(resp.alternative.name).to.match(/trolled/);
+        expect(resp.experiment.name).to.match(/show-bieber/);
+        expect(request.called).to.be.false;
+        request.restore();
+        done();
       });
     });
 
-    it('should return ok and forced alternative for participate with traffic_fraction and force', function (done) {
+    it('should not request an alternative when using force', function (done) {
       var session = new ConstructorioAB.Session();
-      session.participate('show-bieber-fraction', ['trolled', 'not-trolled'], 0.1, 'trolled', function (err, resp) {
+      var request = sinon.stub(ConstructorioAB.Session.prototype, '_request').callsFake(function fakeFn(uri, params, timeout, callback) {
+        callback(null);
+      });
+
+      session.participate('show-bieber', ['trolled', 'not-trolled'], 'trolled', function (err, resp) {
+        expect(err).to.be.null;
         expect(resp.status).to.equal('ok');
-        expect(resp.alternative.name).to.equal('trolled');
-        session.participate('show-bieber-fraction', ['trolled', 'not-trolled'], 0.1, 'not-trolled', function (err, resp) {
-          expect(resp.status).to.equal('ok');
-          expect(resp.alternative.name).to.equal('not-trolled');
-          done();
-        });
+        expect(resp.alternative.name).to.match(/trolled/);
+        expect(resp.experiment.name).to.match(/show-bieber/);
+        expect(request.called).to.be.false;
+        request.restore();
+        done();
       });
     });
   });
