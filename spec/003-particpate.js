@@ -16,7 +16,44 @@ describe('ConstructorioAB.Session', function () {
       delete global.document;
     });
 
-    it('should return an alternative with cookie', function (done) {
+    it('should return an error if zero alternatives are passed in', function (done) {
+      var session = new ConstructorioAB.Session();
+      session.participate('testing', [], function (err, resp) {
+        expect(err.message).to.match(/^Must specify at least 2 alternatives$/);
+        expect(resp).to.be.undefined;
+        done();
+      });
+    });
+
+    it('should return an error if one alternative is passed in', function (done) {
+      var session = new ConstructorioAB.Session();
+      session.participate('testing', ['one'], function (err, resp) {
+        expect(err.message).to.match(/^Must specify at least 2 alternatives$/);
+        expect(resp).to.be.undefined;
+        done();
+      });
+    });
+
+    it('should return an error if an alternative has a bad name', function (done) {
+      var session = new ConstructorioAB.Session();
+      session.participate('show-bieber', ['trolled', '%%'], function (err, resp) {
+        expect(resp).to.be.undefined;
+        expect(err).instanceof(Error);
+        done();
+      });
+    });
+
+    it('should throw an error if no callback is defined', function (done) {
+      var session = new ConstructorioAB.Session();
+      expect(function () {
+        session.participate('show-bieber', ['trolled', 'not-trolled']);
+      }).to.throw(
+        Error, /^Callback is not specified$/
+      );
+      done();
+    });
+
+    it('should return an alternative from cookie', function (done) {
       var session = new ConstructorioAB.Session();
       var request = sinon.stub(ConstructorioAB.Session.prototype, '_request').callsFake(function fakeFn(uri, params, timeout, callback) {
         callback(null);
@@ -85,52 +122,6 @@ describe('ConstructorioAB.Session', function () {
         session.participate('show-bieber-fraction', ['trolled', 'not-trolled'], 0.1, 'not-trolled', function (err, resp) {
           expect(resp.status).to.equal('ok');
           expect(resp.alternative.name).to.equal('not-trolled');
-          done();
-        });
-      });
-    });
-
-    it('should not allow bad alternative names', function (done) {
-      var session = new ConstructorioAB.Session();
-      session.participate('show-bieber', ['trolled'], function (err, alt) {
-        expect(alt).to.be.null;
-        expect(err).instanceof(Error);
-
-        session.participate('show-bieber', ['trolled', '%%'], function (err, alt) {
-          expect(alt).to.be.null;
-          expect(err).instanceof(Error);
-          done();
-        });
-      });
-    });
-
-    it('should throw an error when callback is undefined', function (done) {
-      var session = new ConstructorioAB.Session();
-      session.client_id = 'mike';
-      expect(function () {
-        session.participate('show-bieber', ['trolled', 'not-trolled']);
-      }).to.throw(
-        Error, /^Callback is not specified$/
-      );
-
-      done();
-    });
-
-    it('should throw an error if less than 2 alternatives are passed in', function (done) {
-      var session = new ConstructorioAB.Session();
-      session.participate('testing', [], function (err, resp) {
-        expect(err.message).to.match(/^Must specify at least 2 alternatives$/);
-        done();
-      });
-    });
-
-    it('should get the alternative name from a cookie when participate is called a second time', function (done) {
-      var session = new ConstructorioAB.Session();
-      session.participate('show-bieber', ['trolled', 'not-trolled'], function (err, resp) {
-        session._request = sinon.stub();
-        session.participate('show-bieber', ['trolled', 'not-trolled'], function (err, resp) {
-          expect(resp.alternative.name).to.equal('trolled');
-          expect(session._request.notCalled).to.be.true;
           done();
         });
       });
