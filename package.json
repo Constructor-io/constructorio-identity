@@ -14,9 +14,9 @@
     "clean": "rm -rf node_modules",
     "format": "eslint --fix ",
     "lint": "eslint bin spec/*.js src/*js",
-    "coverage": "CONSTRUCTORIOAB_BASE_URL=http://localhost:5000 nyc --reporter=html mocha spec/",
+    "coverage": "nyc --reporter=html mocha spec/",
     "postcoverage": "http-server coverage",
-    "test": "CONSTRUCTORIOAB_BASE_URL=http://localhost:5000 mocha spec/"
+    "test": "mocha spec/"
   },
   "devDependencies": {
     "babel-eslint": "^8.0.1",
