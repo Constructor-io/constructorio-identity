@@ -61,8 +61,8 @@
   };
 
   ConstructorioID.prototype.update_cookie = function (name) {
-    if (name.match(/^ConstructorioID/)) {
-      var oldName = name.replace(/^ConstructorioID/, 'ConstructorioAB');
+    if (name.match(/^ConstructorioID_/)) {
+      var oldName = name.replace(/^ConstructorioID_/, 'ConstructorioAB_');
       var value = this.get_cookie(oldName);
       if (value) {
         this.set_cookie(name, value);

@@ -65,10 +65,25 @@ describe('ConstructorioID', function () {
       delete global.document;
     });
 
-    it('should read the client id from cookie', function () {
+    it('should read the client id from a named cookie', function () {
       document.cookie = 'dummyname=dummyid; expires=Tue, 19 Jan 2038 03:14:07 GMT; path=/';
       var session = new ConstructorioID({ cookie_name: 'dummyname' });
       expect(session.client_id).to.equal('dummyid');
+      expect(document.cookie).to.equal('dummyname=dummyid');
+    });
+
+    it('should read the client id from the old cookie', function () {
+      document.cookie = 'ConstructorioAB_client_id=tummyid; expires=Tue, 19 Jan 2038 03:14:07 GMT; path=/';
+      var session = new ConstructorioID();
+      expect(session.client_id).to.equal('tummyid');
+      expect(document.cookie).to.equal('ConstructorioID_client_id=tummyid');
+    });
+
+    it('should read the client id from the new cookie', function () {
+      document.cookie = 'ConstructorioID_client_id=bummyid; expires=Tue, 19 Jan 2038 03:14:07 GMT; path=/';
+      var session = new ConstructorioID();
+      expect(session.client_id).to.equal('bummyid');
+      expect(document.cookie).to.equal('ConstructorioID_client_id=bummyid');
     });
 
     it('should set the client id if missing', function () {
