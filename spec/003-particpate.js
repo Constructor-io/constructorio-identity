@@ -66,12 +66,30 @@ describe('ConstructorioID', function () {
       done();
     });
 
-    it('should return an alternative from cookie', function (done) {
+    it('should return an alternative from the old cookie', function (done) {
       var session = new ConstructorioID();
       var request = sinon.stub(ConstructorioID.prototype, '_request').callsFake(function fakeFn(uri, params, timeout, callback) {
         callback(null);
       });
-      document.cookie = session.cookie_prefix_for_experiment + 'show-bieber=trolled; expires=Tue, 19 Jan 2038 03:14:07 GMT; path=/';
+      document.cookie = 'ConstructorioAB_experiment_show-bieber=trolled; expires=Tue, 19 Jan 2038 03:14:07 GMT; path=/';
+
+      session.participate('show-bieber', ['trolled', 'not-trolled'], function (err, resp) {
+        expect(err).to.be.null;
+        expect(resp.status).to.equal('ok');
+        expect(resp.alternative.name).to.match(/trolled/);
+        expect(resp.experiment.name).to.match(/show-bieber/);
+        expect(request.called).to.be.false;
+        request.restore();
+        done();
+      });
+    });
+
+    it('should return an alternative from the new cookie', function (done) {
+      var session = new ConstructorioID();
+      var request = sinon.stub(ConstructorioID.prototype, '_request').callsFake(function fakeFn(uri, params, timeout, callback) {
+        callback(null);
+      });
+      document.cookie = 'ConstructorioID_experiment_show-bieber=trolled; expires=Tue, 19 Jan 2038 03:14:07 GMT; path=/';
 
       session.participate('show-bieber', ['trolled', 'not-trolled'], function (err, resp) {
         expect(err).to.be.null;
@@ -157,7 +175,7 @@ describe('ConstructorioID', function () {
       var request = sinon.stub(ConstructorioID.prototype, '_request').callsFake(function fakeFn(uri, params, timeout, callback) {
         callback(null);
       });
-      document.cookie = session.cookie_prefix_for_experiment + 'show-bieber=not-trolled; expires=Tue, 19 Jan 2038 03:14:07 GMT; path=/';
+      document.cookie = 'ConstructorioID_experiment_show-bieber=not-trolled; expires=Tue, 19 Jan 2038 03:14:07 GMT; path=/';
 
       session.participate('show-bieber', ['trolled', 'not-trolled'], 'trolled', function (err, resp) {
         expect(err).to.be.null;
