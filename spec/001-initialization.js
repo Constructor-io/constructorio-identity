@@ -8,6 +8,8 @@ describe('ConstructorioID', function () {
     var expectedKeys = [
       'set_cookie',
       'get_cookie',
+      'update_cookie',
+      'delete_cookie',
       'generate_client_id',
       'participate',
       'convert',

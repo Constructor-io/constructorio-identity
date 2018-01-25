@@ -1,3 +1,4 @@
+/* eslint-disable no-undefined, no-param-reassign */
 (function () {
   // Object.assign polyfill from https://developer.mozilla.org/en/docs/Web/JavaScript/Reference/Global_Objects/Object/assign#Polyfill
   Object.assign || Object.defineProperty(Object, 'assign', {enumerable: !1, configurable: !0, writable: !0, value: function (e) {'use strict'; if (void 0 === e || e === null) throw new TypeError('Cannot convert first argument to object'); for (var r = Object(e), t = 1; t < arguments.length; t++) {var n = arguments[t]; if (void 0 !== n && n !== null) {n = Object(n); for (var o = Object.keys(Object(n)), a = 0, c = o.length; c > a; a++) {var i = o[a], b = Object.getOwnPropertyDescriptor(n, i); void 0 !== b && b.enumerable && (r[i] = n[i]);}}} return r;}});
@@ -21,6 +22,7 @@
 
     if (!this.client_id) {
       if (!this.on_node && this.persist) {
+        this.update_cookie(this.cookie_name);
         var persisted_id = this.get_cookie(this.cookie_name);
         this.client_id = persisted_id ? persisted_id : this.generate_client_id();
       } else {
@@ -56,6 +58,21 @@
       }
     }
     return undefined;
+  };
+
+  ConstructorioID.prototype.update_cookie = function (name) {
+    if (name.match(/^ConstructorioID/)) {
+      var oldName = name.replace(/^ConstructorioID/, 'ConstructorioAB');
+      var value = this.get_cookie(oldName);
+      if (value) {
+        this.set_cookie(name, value);
+        this.delete_cookie(oldName);
+      }
+    }
+  };
+
+  ConstructorioID.prototype.delete_cookie = function (name) {
+    document.cookie = name + '=;expires=Thu, 01 Jan 1970 00:00:01 GMT;';
   };
 
   ConstructorioID.prototype.generate_client_id = function () {
@@ -125,6 +142,7 @@
     }
 
     var experiment_cookie_name = this.cookie_prefix_for_experiment + experiment_name;
+    this.update_cookie(experiment_cookie_name);
     var alternative_name = this.get_cookie(experiment_cookie_name);
     if (alternative_name && alternatives.indexOf(alternative_name) > -1) {
       var res = {
