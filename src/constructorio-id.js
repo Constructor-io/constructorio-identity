@@ -21,8 +21,8 @@
 
     if (!this.client_id) {
       if (!this.on_node && this.persist) {
-        var persisted_id = this.persisted_client_id();
-        this.client_id = persisted_id !== null ? persisted_id : this.generate_client_id();
+        var persisted_id = this.get_cookie(this.cookie_name);
+        this.client_id = persisted_id ? persisted_id : this.generate_client_id();
       } else {
         this.client_id = this.generate_client_id();
       }
@@ -55,7 +55,7 @@
         return thisCookie.substring(cookieName.length, thisCookie.length);
       }
     }
-    return '';
+    return undefined;
   };
 
   ConstructorioID.prototype.generate_client_id = function () {
@@ -67,12 +67,6 @@
     });
     this.set_cookie(this.cookie_name, client_id);
     return client_id;
-  };
-
-  ConstructorioID.prototype.persisted_client_id = function () {
-    // http://stackoverflow.com/questions/5639346/shortest-function-for-reading-a-cookie-in-javascript
-    var result;
-    return (result = new RegExp('(?:^|; )' + encodeURIComponent(this.cookie_name) + '=([^;]*)').exec(document.cookie)) ? (result[1]) : null;
   };
 
   ConstructorioID.prototype.participate = function (experiment_name, alternatives, traffic_fraction, force, callback) {

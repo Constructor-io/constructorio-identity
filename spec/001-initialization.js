@@ -9,7 +9,6 @@ describe('ConstructorioID', function () {
       'set_cookie',
       'get_cookie',
       'generate_client_id',
-      'persisted_client_id',
       'participate',
       'convert',
       '_request',

@@ -33,7 +33,7 @@ describe('ConstructorioID', function () {
     it('should not read a missing cookie', function () {
       var session = new ConstructorioID();
       var value = session.get_cookie('melikecookie');
-      expect(value).to.equal('');
+      expect(value).to.be.undefined;
     });
   });
 
@@ -44,15 +44,6 @@ describe('ConstructorioID', function () {
       expect(session.get_cookie('monster')).to.equal(client_id);
       expect(client_id).to.be.a.string;
       expect(client_id).to.match(/(\w|d|-){36}/);
-    });
-  });
-
-  describe('persisted_client_id', function () {
-    it('should return a client id from the cookie', function () {
-      var session = new ConstructorioID({ cookie_name: 'monster' });
-      var client_id = session.generate_client_id();
-      var persisted_id = session.persisted_client_id();
-      expect(client_id).to.equal(persisted_id);
     });
   });
 
