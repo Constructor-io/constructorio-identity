@@ -4,15 +4,15 @@
 
   var counter = 0;
 
-  var ConstructorioAB = function (options) {
+  var ConstructorioID = function (options) {
     var defaults = {
       base_url: 'https://ab.cnstrc.com',
       ip_address: null,
       user_agent: null,
       timeout: 2000,
       persist: true,
-      cookie_name: 'ConstructorioAB_client_id',
-      cookie_prefix_for_experiment: 'ConstructorioAB_experiment_',
+      cookie_name: 'ConstructorioID_client_id',
+      cookie_prefix_for_experiment: 'ConstructorioID_experiment_',
       cookie_domain: null,
       on_node: typeof window === 'undefined'
     };
@@ -32,7 +32,7 @@
     }
   };
 
-  ConstructorioAB.prototype.set_cookie = function (name, value) {
+  ConstructorioID.prototype.set_cookie = function (name, value) {
     if (!this.on_node && this.persist) {
       var cookie_data = name + '=' + value + '; expires=Tue, 19 Jan 2038 03:14:07 GMT; path=/';
       if (this.cookie_domain) {
@@ -42,7 +42,7 @@
     }
   };
 
-  ConstructorioAB.prototype.get_cookie = function (name) {
+  ConstructorioID.prototype.get_cookie = function (name) {
     var cookieName = name + '=';
     var decodedCookie = decodeURIComponent(document.cookie);
     var cookieBits = decodedCookie.split(';');
@@ -58,7 +58,7 @@
     return '';
   };
 
-  ConstructorioAB.prototype.generate_client_id = function () {
+  ConstructorioID.prototype.generate_client_id = function () {
     // from http://stackoverflow.com/questions/105034
     var client_id = 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function (c) {
       var r = Math.random() * 16 | 0;
@@ -69,13 +69,13 @@
     return client_id;
   };
 
-  ConstructorioAB.prototype.persisted_client_id = function () {
+  ConstructorioID.prototype.persisted_client_id = function () {
     // http://stackoverflow.com/questions/5639346/shortest-function-for-reading-a-cookie-in-javascript
     var result;
     return (result = new RegExp('(?:^|; )' + encodeURIComponent(this.cookie_name) + '=([^;]*)').exec(document.cookie)) ? (result[1]) : null;
   };
 
-  ConstructorioAB.prototype.participate = function (experiment_name, alternatives, traffic_fraction, force, callback) {
+  ConstructorioID.prototype.participate = function (experiment_name, alternatives, traffic_fraction, force, callback) {
     if (typeof traffic_fraction === 'function') {
       callback = traffic_fraction;
       traffic_fraction = null;
@@ -111,7 +111,7 @@
       experiment: experiment_name,
       alternatives: alternatives};
     if (!this.on_node && force === null) {
-      var regex = new RegExp('[\\?&]ConstructorioAB-force-' + experiment_name + '=([^&#]*)');
+      var regex = new RegExp('[\\?&]ConstructorioID-force-' + experiment_name + '=([^&#]*)');
       var results = regex.exec(window.location.search);
       if (results !== null) {
         force = decodeURIComponent(results[1].replace(/\+/g, ' '));
@@ -163,7 +163,7 @@
     });
   };
 
-  ConstructorioAB.prototype.convert = function (experiment_name, kpi, callback) {
+  ConstructorioID.prototype.convert = function (experiment_name, kpi, callback) {
     if (typeof kpi === 'function') {
       callback = kpi;
       kpi = null;
@@ -197,7 +197,7 @@
     });
   };
 
-  ConstructorioAB.prototype._request = function (uri, params, timeout, callback) {
+  ConstructorioID.prototype._request = function (uri, params, timeout, callback) {
     var timed_out = false;
     var timeout_handle = setTimeout(function () {
       timed_out = true;
@@ -206,8 +206,8 @@
 
     if (!this.on_node) {
       var cb = 'callback' + (++counter);
-      params.callback = 'ConstructorioAB.' + cb;
-      ConstructorioAB[cb] = function (res) {
+      params.callback = 'ConstructorioID.' + cb;
+      ConstructorioID[cb] = function (res) {
         if (!timed_out) {
           clearTimeout(timeout_handle);
           return callback(null, res);
@@ -250,7 +250,7 @@
     }
   };
 
-  ConstructorioAB.prototype._request_uri = function (endpoint, params) {
+  ConstructorioID.prototype._request_uri = function (endpoint, params) {
     var query_string = [];
     var e = encodeURIComponent;
     for (var key in params) {
@@ -270,7 +270,7 @@
     return endpoint;
   };
 
-  ConstructorioAB.prototype._in_array = function (a, v) {
+  ConstructorioID.prototype._in_array = function (a, v) {
     for (var i = 0; i < a.length; i++) {
       if (a[i] === v) {
         return true;
@@ -280,11 +280,11 @@
   };
 
   if (typeof window !== 'undefined') {
-    window.ConstructorioAB = ConstructorioAB;
+    window.ConstructorioID = ConstructorioID;
   }
 
   // export module for node or environments with module loaders, such as webpack
   if (typeof module !== 'undefined' && typeof require !== 'undefined') {
-    module.exports = ConstructorioAB;
+    module.exports = ConstructorioID;
   }
 })();
