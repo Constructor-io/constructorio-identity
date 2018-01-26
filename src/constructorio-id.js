@@ -29,6 +29,15 @@
         this.client_id = this.generate_client_id();
       }
     }
+
+    if (!this.session_id) {
+      if (!this.on_node && this.persist) {
+        this.session_id = this.get_session_id();
+      } else {
+        this.session_id = 1;
+      }
+    }
+
     if (!this.on_node) {
       this.user_agent = this.user_agent || (window && window.navigator && window.navigator.userAgent);
     }
@@ -84,6 +93,47 @@
     });
     this.set_cookie(this.cookie_name, client_id);
     return client_id;
+  };
+
+  ConstructorioID.prototype.get_local_object = function (key) {
+    var data;
+    if (localStorage && typeof key  === 'string') {
+      try {
+        data = JSON.parse(this.storageGetItem(key));
+      } catch (e) {
+        // fail silently
+      }
+    }
+    return data;
+  };
+
+  ConstructorioID.prototype.set_local_object = function (key, obj) {
+    if (localStorage && typeof key  === 'string' && typeof obj === 'object') {
+      localStorage.setItem(key, JSON.stringify(obj));
+    }
+  };
+
+  ConstructorioID.prototype.get_session_id = function () {
+    var now = Date.now();
+    var thirtyMinutes = 1000 * 60 * 30;
+    var sessionKey = '_constructorio_search_session';
+    var sessionData = this.get_local_object(sessionKey);
+    var sessionId = 1;
+
+    if (sessionData) {
+      if (sessionData.lastTime > now - thirtyMinutes) {
+        this.sessionId = sessionData.sessionId;
+      } else {
+        this.sessionId = sessionData.sessionId + 1;
+      }
+    }
+
+    this.set_local_object({
+      sessionId: sessionId,
+      lastTime: now
+    });
+
+    return sessionId;
   };
 
   ConstructorioID.prototype.participate = function (experiment_name, alternatives, traffic_fraction, force, callback) {
