@@ -1,5 +1,6 @@
 var expect = require('chai').expect;
 var jsdom = require('jsdom');
+var setup = require('./_setup');
 var ConstructorioID = require('../src/constructorio-id.js');
 
 describe('ConstructorioID', function () {
@@ -60,6 +61,7 @@ describe('ConstructorioID', function () {
     beforeEach(function () {
       var dom = new jsdom.JSDOM();
       global.window = dom.window;
+      global.window.localStorage = setup.getStorageMock();
       global.document = dom.window.document;
     });
 
@@ -95,6 +97,24 @@ describe('ConstructorioID', function () {
       expect(session.client_id).to.match(/(\w|d|-){36}/);
     });
 
+    it('should read the session id from local storage', function () {
+      window.localStorage.setItem('_constructorio_search_session', JSON.stringify({
+        sessionId: 42,
+        lastTime: Date.now()
+      }));
+      var session = new ConstructorioID();
+      expect(session.session_id).to.be.a.number;
+      expect(session.session_id).to.equal(42);
+    });
+
+    it('should set the session id in local storage if missing', function () {
+      var session = new ConstructorioID();
+      var sessionData = window.localStorage.getItem('_constructorio_search_session');
+      expect(session.session_id).to.be.a.number;
+      expect(session.session_id).to.equal(1);
+      expect(sessionData).to.be.an.object;
+    });
+
     it('should set the user agent', function () {
       var session = new ConstructorioID();
       expect(session.user_agent).to.match(/jsdom/);
@@ -116,6 +136,17 @@ describe('ConstructorioID', function () {
       var session = new ConstructorioID();
       expect(session.client_id).to.be.a.string;
       expect(session.client_id).to.match(/(\w|d|-){36}/);
+    });
+
+    it('should use the session id if in options', function () {
+      var session = new ConstructorioID({ session_id: 42 });
+      expect(session.session_id).to.equal(42);
+    });
+
+    it('should use a session id of 1 if missing', function () {
+      var session = new ConstructorioID();
+      expect(session.session_id).to.be.a.number;
+      expect(session.session_id).to.equal(1);
     });
 
     it('should not set the user agent', function () {

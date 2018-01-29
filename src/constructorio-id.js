@@ -124,12 +124,13 @@
 
     if (sessionData) {
       if (sessionData.lastTime > now - thirtyMinutes) {
-        this.sessionId = sessionData.sessionId;
+        sessionId = sessionData.sessionId;
       } else {
-        this.sessionId = sessionData.sessionId + 1;
+        sessionId = sessionData.sessionId + 1;
       }
     }
 
+    this.session_id = sessionId;
     this.set_local_object({
       sessionId: sessionId,
       lastTime: now
