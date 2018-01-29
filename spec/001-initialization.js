@@ -1,6 +1,6 @@
 var expect = require('chai').expect;
 var jsdom = require('jsdom');
-var setup = require('./_setup');
+var helper = require('./helper');
 var ConstructorioID = require('../src/constructorio-id.js');
 
 describe('ConstructorioID', function () {
@@ -61,7 +61,7 @@ describe('ConstructorioID', function () {
     beforeEach(function () {
       var dom = new jsdom.JSDOM();
       global.window = dom.window;
-      global.window.localStorage = setup.getStorageMock();
+      global.window.localStorage = helper.getStorageMock();
       global.document = dom.window.document;
     });
 
