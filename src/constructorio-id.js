@@ -97,9 +97,10 @@
 
   ConstructorioID.prototype.get_local_object = function (key) {
     var data;
+    var localStorage = window && window.localStorage;
     if (localStorage && typeof key  === 'string') {
       try {
-        data = JSON.parse(this.storageGetItem(key));
+        data = JSON.parse(localStorage.getItem(key));
       } catch (e) {
         // fail silently
       }
@@ -108,6 +109,7 @@
   };
 
   ConstructorioID.prototype.set_local_object = function (key, obj) {
+    var localStorage = window && window.localStorage;
     if (localStorage && typeof key  === 'string' && typeof obj === 'object') {
       localStorage.setItem(key, JSON.stringify(obj));
     }
