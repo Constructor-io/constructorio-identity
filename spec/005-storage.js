@@ -35,11 +35,15 @@ describe('ConstructorioID', function () {
 
   describe('set_local_object', function () {
     it('should set a local object', function () {
-
+      var session = new ConstructorioID();
+      session.set_local_object('adventuretime', { marceline: true });
+      expect(window.localStorage._data.adventuretime).to.be.a.string;
     });
 
     it('should not set a non-object', function () {
-
+      var session = new ConstructorioID();
+      session.set_local_object('adventuretime', 'We\'re going to very distant lands.');
+      expect(window.localStorage._data.adventuretime).to.be.undefined;
     });
   });
 
