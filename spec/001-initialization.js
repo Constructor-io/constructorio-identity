@@ -109,10 +109,8 @@ describe('ConstructorioID', function () {
 
     it('should set the session id in local storage if missing', function () {
       var session = new ConstructorioID();
-      var sessionData = window.localStorage.getItem('_constructorio_search_session');
       expect(session.session_id).to.be.a.number;
       expect(session.session_id).to.equal(1);
-      expect(sessionData).to.be.an.object;
     });
 
     it('should set the user agent', function () {
