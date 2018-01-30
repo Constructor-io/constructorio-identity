@@ -51,6 +51,7 @@ describe('ConstructorioID', function () {
 
   describe('get_session_id', function () {
     it('should return a session id from local storage if recent', function () {
+      var now = Date.now();
       var session = new ConstructorioID();
       window.localStorage.clear();
       window.localStorage.setItem('_constructorio_search_session', JSON.stringify({
@@ -64,11 +65,14 @@ describe('ConstructorioID', function () {
       expect(session_id).to.equal(42);
       expect(set_local_object.calledOnce).to.be.true;
       expect(set_local_object.calledWith('_constructorio_search_session')).to.be.true;
+      expect(set_local_object.getCall(0).args[1].sessionId).to.equal(42);
+      expect(set_local_object.getCall(0).args[1].lastTime).to.be.at.least(now);
 
       set_local_object.restore();
     });
 
     it('should increment session id from local storage if older than thirty minutes', function () {
+      var now = Date.now();
       var session = new ConstructorioID();
       window.localStorage.clear();
       window.localStorage.setItem('_constructorio_search_session', JSON.stringify({
@@ -82,11 +86,14 @@ describe('ConstructorioID', function () {
       expect(session_id).to.equal(43);
       expect(set_local_object.calledOnce).to.be.true;
       expect(set_local_object.calledWith('_constructorio_search_session')).to.be.true;
+      expect(set_local_object.getCall(0).args[1].sessionId).to.equal(43);
+      expect(set_local_object.getCall(0).args[1].lastTime).to.be.at.least(now);
 
       set_local_object.restore();
     });
 
     it('should set a session id from local storage if missing', function () {
+      var now = Date.now();
       var session = new ConstructorioID();
       window.localStorage.clear();
 
@@ -96,7 +103,8 @@ describe('ConstructorioID', function () {
       expect(session_id).to.equal(1);
       expect(set_local_object.calledOnce).to.be.true;
       expect(set_local_object.calledWith('_constructorio_search_session')).to.be.true;
-
+      expect(set_local_object.getCall(0).args[1].sessionId).to.equal(1);
+      expect(set_local_object.getCall(0).args[1].lastTime).to.be.at.least(now);
       set_local_object.restore();
     });
   });
