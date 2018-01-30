@@ -131,7 +131,7 @@
     }
 
     this.session_id = sessionId;
-    this.set_local_object({
+    this.set_local_object(sessionKey, {
       sessionId: sessionId,
       lastTime: now
     });
