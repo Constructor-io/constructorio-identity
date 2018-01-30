@@ -38,6 +38,7 @@ describe('ConstructorioID', function () {
       var session = new ConstructorioID();
       session.set_local_object('adventuretime', { marceline: true });
       expect(window.localStorage._data.adventuretime).to.be.a.string;
+      expect(JSON.parse(window.localStorage._data.adventuretime)).to.deep.equal({ marceline: true });
     });
 
     it('should not set a non-object', function () {
@@ -58,7 +59,7 @@ describe('ConstructorioID', function () {
       expect(session.session_id).to.equal(42);
     });
 
-    it('should increment session id from local storage if older than thirty minuteer than thirty minutes', function () {
+    it('should increment session id from local storage if older than thirty minutes', function () {
       window.localStorage.setItem('_constructorio_search_session', JSON.stringify({
         sessionId: 42,
         lastTime: Date.now() - 1000 * 60 * 30
