@@ -1,10 +1,11 @@
 {
   "name": "constructorio-id",
   "version": "1.0.0",
-  "description": "Idetity management for javascript clients (autocomplete/search)",
-  "homepage": "https://github.com/constructor-io/cdn",
+  "description": "A JavaScript module for managing identity, session, and AB testing",
+  "homepage": "https://github.com/Constructor-io/constructorio-identity",
   "author": "Zubin Tiku (constructor.io)",
   "license": "MIT",
+  "main": "src/constructorio-id.js",
   "nyc": {
     "exclude": [
       "spec"
