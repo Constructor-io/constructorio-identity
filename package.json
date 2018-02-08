@@ -2,7 +2,7 @@
   "name": "constructorio-id",
   "version": "1.0.0",
   "description": "A JavaScript module for managing identity, session, and AB testing",
-  "homepage": "https://github.com/Constructor-io/constructorio-identity",
+  "repository": "https://github.com/Constructor-io/constructorio-identity",
   "author": "Zubin Tiku (constructor.io)",
   "license": "MIT",
   "main": "src/constructorio-id.js",
