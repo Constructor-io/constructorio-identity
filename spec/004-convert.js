@@ -16,16 +16,6 @@ describe('ConstructorioID', function () {
       delete global.document;
     });
 
-    it('should throw an error if no callback is defined', function (done) {
-      var session = new ConstructorioID();
-      expect(function () {
-        session.convert('show-bieber');
-      }).to.throw(
-        Error, /^Callback is not specified$/
-      );
-      done();
-    });
-
     it('should return an error if an experiment has a bad name', function (done) {
       var session = new ConstructorioID();
       session.convert('%%', function (err, resp) {
@@ -57,7 +47,48 @@ describe('ConstructorioID', function () {
       });
     });
 
-    it('should return ok for convert with kpi', function (done) {
+    it('should return ok for convert with no kpi and no callback', function (done) {
+      var session = new ConstructorioID();
+      var request = sinon.stub(ConstructorioID.prototype, '_request').callsFake(function fakeFn(uri, params, timeout, callback) {
+        callback(null, { status: 'ok' });
+      });
+      var requestParams = {
+        client_id: session.client_id,
+        experiment: 'show-bieber',
+        user_agent: 'Mozilla/5.0 (darwin) AppleWebKit/537.36 (KHTML, like Gecko) jsdom/11.5.1'
+      };
+
+      session.convert('show-bieber');
+      setTimeout(function () {
+        expect(request.called).to.be.true;
+        expect(request.getCall(0).args[1]).to.deep.equal(requestParams);
+        request.restore();
+        done();
+      });
+    });
+
+    it('should return ok for convert with kpi and no callback', function (done) {
+      var session = new ConstructorioID();
+      var request = sinon.stub(ConstructorioID.prototype, '_request').callsFake(function fakeFn(uri, params, timeout, callback) {
+        callback(null, { status: 'ok' });
+      });
+      var requestParams = {
+        client_id: session.client_id,
+        experiment: 'show-bieber',
+        kpi: 'hacked-instagram',
+        user_agent: 'Mozilla/5.0 (darwin) AppleWebKit/537.36 (KHTML, like Gecko) jsdom/11.5.1'
+      };
+
+      session.convert('show-bieber', 'hacked-instagram');
+      setTimeout(function () {
+        expect(request.called).to.be.true;
+        expect(request.getCall(0).args[1]).to.deep.equal(requestParams);
+        request.restore();
+        done();
+      });
+    });
+
+    it('should return ok for convert with kpi and callback', function (done) {
       var session = new ConstructorioID({ ip_address: '1.1.1.1' });
       var request = sinon.stub(ConstructorioID.prototype, '_request').callsFake(function fakeFn(uri, params, timeout, callback) {
         callback(null, { status: 'ok' });
