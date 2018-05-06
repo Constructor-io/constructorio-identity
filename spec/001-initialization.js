@@ -34,6 +34,7 @@ describe('ConstructorioID', function () {
     expect(session.cookie_name).to.equal('ConstructorioID_client_id');
     expect(session.cookie_prefix_for_experiment).to.equal('ConstructorioID_experiment_');
     expect(session.cookie_domain).to.be.null;
+    expect(session.session_is_new).to.be.true;
   });
 
   it('should override defaults with options', function () {
@@ -107,10 +108,38 @@ describe('ConstructorioID', function () {
       expect(session.session_id).to.equal(42);
     });
 
-    it('should set the session id in local storage if missing', function () {
+    it('should set the session id to 1 if missing', function () {
       var session = new ConstructorioID();
       expect(session.session_id).to.be.a.number;
       expect(session.session_id).to.equal(1);
+    });
+
+    it('should set session_is_new to false if lastTime is recent', function () {
+      window.localStorage.setItem('_constructorio_search_session', JSON.stringify({
+        sessionId: 42,
+        lastTime: Date.now()
+      }));
+      var session = new ConstructorioID();
+      expect(session.session_id).to.equal(42);
+      expect(session.session_is_new).to.be.a.bool;
+      expect(session.session_is_new).to.equal(false);
+    });
+
+    it('should set session_is_new to true if lastTime is old', function () {
+      window.localStorage.setItem('_constructorio_search_session', JSON.stringify({
+        sessionId: 42,
+        lastTime: Date.now() - 1000 * 60 * 60 * 24 * 60
+      }));
+      var session = new ConstructorioID();
+      expect(session.session_id).to.equal(43);
+      expect(session.session_is_new).to.be.a.bool;
+      expect(session.session_is_new).to.equal(true);
+    });
+
+    it('should set session_is_new to true if missing', function () {
+      var session = new ConstructorioID();
+      expect(session.session_is_new).to.be.a.bool;
+      expect(session.session_is_new).to.equal(true);
     });
 
     it('should set the user agent', function () {
