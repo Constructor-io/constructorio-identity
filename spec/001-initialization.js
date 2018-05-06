@@ -98,7 +98,7 @@ describe('ConstructorioID', function () {
       expect(session.client_id).to.match(/(\w|d|-){36}/);
     });
 
-    it('should read the session id from local storage', function () {
+    it('should read the session id from local storage data', function () {
       window.localStorage.setItem('_constructorio_search_session', JSON.stringify({
         sessionId: 42,
         lastTime: Date.now()
@@ -108,13 +108,13 @@ describe('ConstructorioID', function () {
       expect(session.session_id).to.equal(42);
     });
 
-    it('should set the session id to 1 if missing', function () {
+    it('should set the session id to 1 if there is no local storage data', function () {
       var session = new ConstructorioID();
       expect(session.session_id).to.be.a.number;
       expect(session.session_id).to.equal(1);
     });
 
-    it('should set session_is_new to false if lastTime is recent', function () {
+    it('should set session_is_new to false if the session is not new', function () {
       window.localStorage.setItem('_constructorio_search_session', JSON.stringify({
         sessionId: 42,
         lastTime: Date.now()
@@ -125,7 +125,7 @@ describe('ConstructorioID', function () {
       expect(session.session_is_new).to.equal(false);
     });
 
-    it('should set session_is_new to true if lastTime is old', function () {
+    it('should set session_is_new to true if the session is new', function () {
       window.localStorage.setItem('_constructorio_search_session', JSON.stringify({
         sessionId: 42,
         lastTime: Date.now() - 1000 * 60 * 60 * 24 * 60
@@ -136,7 +136,7 @@ describe('ConstructorioID', function () {
       expect(session.session_is_new).to.equal(true);
     });
 
-    it('should set session_is_new to true if missing', function () {
+    it('should set session_is_new to true if there is no local storage data', function () {
       var session = new ConstructorioID();
       expect(session.session_is_new).to.be.a.bool;
       expect(session.session_is_new).to.equal(true);
