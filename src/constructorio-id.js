@@ -16,7 +16,7 @@
       cookie_prefix_for_experiment: 'ConstructorioID_experiment_',
       cookie_domain: null,
       on_node: typeof window === 'undefined',
-      session_is_new: false
+      session_is_new: null
     };
 
     Object.assign(this, defaults, options);
@@ -36,7 +36,6 @@
         this.session_id = this.get_session_id();
       } else {
         this.session_id = 1;
-        this.session_is_new = true;
       }
     }
 

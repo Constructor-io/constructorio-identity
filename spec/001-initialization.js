@@ -34,7 +34,6 @@ describe('ConstructorioID', function () {
     expect(session.cookie_name).to.equal('ConstructorioID_client_id');
     expect(session.cookie_prefix_for_experiment).to.equal('ConstructorioID_experiment_');
     expect(session.cookie_domain).to.be.null;
-    expect(session.session_is_new).to.be.true;
   });
 
   it('should override defaults with options', function () {
@@ -179,6 +178,11 @@ describe('ConstructorioID', function () {
     it('should not set the user agent', function () {
       var session = new ConstructorioID();
       expect(session.user_agent).to.be.null;
+    });
+
+    it('should not set session_is_new', function () {
+      var session = new ConstructorioID();
+      expect(session.session_is_new).to.be.null;
     });
 
     it('should set node status to true', function () {
