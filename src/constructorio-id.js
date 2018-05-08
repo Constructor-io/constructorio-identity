@@ -15,7 +15,8 @@
       cookie_name: 'ConstructorioID_client_id',
       cookie_prefix_for_experiment: 'ConstructorioID_experiment_',
       cookie_domain: null,
-      on_node: typeof window === 'undefined'
+      on_node: typeof window === 'undefined',
+      session_is_new: null
     };
 
     Object.assign(this, defaults, options);
@@ -131,6 +132,7 @@
     }
 
     this.session_id = sessionId;
+    this.session_is_new = sessionData && sessionData.sessionId === sessionId ? false : true;
     this.set_local_object(sessionKey, {
       sessionId: sessionId,
       lastTime: now
