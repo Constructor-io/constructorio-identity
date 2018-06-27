@@ -15,6 +15,7 @@
       cookie_name: 'ConstructorioID_client_id',
       cookie_prefix_for_experiment: 'ConstructorioID_experiment_',
       cookie_domain: null,
+      cookie_time_to_live: 365,
       on_node: typeof window === 'undefined',
       session_is_new: null
     };
@@ -46,7 +47,10 @@
 
   ConstructorioID.prototype.set_cookie = function (name, value) {
     if (!this.on_node && this.persist) {
-      var cookie_data = name + '=' + value + '; expires=Tue, 19 Jan 2038 03:14:07 GMT; path=/';
+      var expires = new Date();
+      expires.setTime(expires.getTime() + (this.cookie_time_to_live * 24 * 60 * 60 * 1000));
+
+      var cookie_data = name + '=' + value + '; expires=' + expires.toUTCString() + ' path=/';
       if (this.cookie_domain) {
         cookie_data += '; domain=' + this.cookie_domain;
       }
