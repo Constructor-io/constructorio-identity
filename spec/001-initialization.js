@@ -14,12 +14,7 @@ describe('ConstructorioID', function () {
       'generate_client_id',
       'get_local_object',
       'set_local_object',
-      'get_session_id',
-      'participate',
-      'convert',
-      '_request',
-      '_request_uri',
-      '_in_array'
+      'get_session_id'
     ];
     expect(actualKeys).to.eql(expectedKeys);
   });
