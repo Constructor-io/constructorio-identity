@@ -1,17 +1,14 @@
-/* eslint-disable no-undefined, no-param-reassign */
+/* eslint-disable no-undefined */
 (function () {
   // Object.assign polyfill from https://developer.mozilla.org/en/docs/Web/JavaScript/Reference/Global_Objects/Object/assign#Polyfill
+  // eslint-disable-next-line
   Object.assign || Object.defineProperty(Object, 'assign', {enumerable: !1, configurable: !0, writable: !0, value: function (e) {'use strict'; if (void 0 === e || e === null) throw new TypeError('Cannot convert first argument to object'); for (var r = Object(e), t = 1; t < arguments.length; t++) {var n = arguments[t]; if (void 0 !== n && n !== null) {n = Object(n); for (var o = Object.keys(Object(n)), a = 0, c = o.length; c > a; a++) {var i = o[a], b = Object.getOwnPropertyDescriptor(n, i); void 0 !== b && b.enumerable && (r[i] = n[i]);}}} return r;}});
 
   var ConstructorioID = function (options) {
     var defaults = {
-      base_url: 'https://ab.cnstrc.com',
-      ip_address: null,
       user_agent: null,
-      timeout: 2000,
       persist: true,
       cookie_name: 'ConstructorioID_client_id',
-      cookie_prefix_for_experiment: 'ConstructorioID_experiment_',
       cookie_domain: null,
       cookie_days_to_live: 365,
       on_node: typeof window === 'undefined',
@@ -86,7 +83,6 @@
   };
 
   ConstructorioID.prototype.generate_client_id = function () {
-    // from http://stackoverflow.com/questions/105034
     var client_id = 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function (c) {
       var r = Math.random() * 16 | 0;
       var v = c === 'x' ? r : (r & 0x3 | 0x8);
