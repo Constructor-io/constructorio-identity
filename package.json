@@ -23,16 +23,17 @@
     "lint"
   ],
   "devDependencies": {
-    "babel-eslint": "^8.0.1",
-    "chai": "^3.5.0",
-    "eslint": "^4.9.0",
-    "eslint-config-airbnb-base": "^12.1.0",
-    "eslint-plugin-import": "^2.7.0",
-    "http-server": "^0.8.5",
-    "jsdom": "11.5.1",
-    "mocha": "^3.1.0",
-    "nyc": "^11.4.1",
+    "babel-eslint": "^10.0.3",
+    "chai": "^4.2.0",
+    "eslint": "^6.4.0",
+    "eslint-config-airbnb-base": "^14.0.0",
+    "eslint-plugin-import": "^2.18.2",
+    "http-server": "^0.11.1",
+    "jsdom": "^15.1.1",
+    "mocha": "^6.2.0",
+    "nyc": "^14.1.1",
     "pre-push": "^0.1.1",
-    "sinon": "^2.1.0"
-  }
+    "sinon": "^7.4.2"
+  },
+  "dependencies": {}
 }

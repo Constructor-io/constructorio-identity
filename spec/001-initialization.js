@@ -21,13 +21,9 @@ describe('ConstructorioID', function () {
 
   it('should provide defaults', function () {
     var session = new ConstructorioID();
-    expect(session.base_url).to.equal('https://ab.cnstrc.com');
-    expect(session.ip_address).to.be.null;
     expect(session.user_agent).to.be.null;
-    expect(session.timeout).to.equal(2000);
     expect(session.persist).to.be.true;
     expect(session.cookie_name).to.equal('ConstructorioID_client_id');
-    expect(session.cookie_prefix_for_experiment).to.equal('ConstructorioID_experiment_');
     expect(session.cookie_domain).to.be.null;
   });
 
@@ -54,7 +50,9 @@ describe('ConstructorioID', function () {
 
   describe('when used in browser', function () {
     beforeEach(function () {
-      var dom = new jsdom.JSDOM();
+      var dom = new jsdom.JSDOM(``, {
+        url: 'http://localhost'
+      });
       global.window = dom.window;
       global.window.localStorage = helper.getStorageMock();
       global.document = dom.window.document;
@@ -98,13 +96,13 @@ describe('ConstructorioID', function () {
         lastTime: Date.now()
       }));
       var session = new ConstructorioID();
-      expect(session.session_id).to.be.a.number;
+      expect(session.session_id).to.be.a('number');
       expect(session.session_id).to.equal(42);
     });
 
     it('should set the session id to 1 if there is no local storage data', function () {
       var session = new ConstructorioID();
-      expect(session.session_id).to.be.a.number;
+      expect(session.session_id).to.be.a('number');
       expect(session.session_id).to.equal(1);
     });
 
@@ -115,7 +113,7 @@ describe('ConstructorioID', function () {
       }));
       var session = new ConstructorioID();
       expect(session.session_id).to.equal(42);
-      expect(session.session_is_new).to.be.a.bool;
+      expect(session.session_is_new).to.be.a('boolean');
       expect(session.session_is_new).to.equal(false);
     });
 
@@ -126,13 +124,13 @@ describe('ConstructorioID', function () {
       }));
       var session = new ConstructorioID();
       expect(session.session_id).to.equal(43);
-      expect(session.session_is_new).to.be.a.bool;
+      expect(session.session_is_new).to.be.a('boolean');
       expect(session.session_is_new).to.equal(true);
     });
 
     it('should set session_is_new to true if there is no local storage data', function () {
       var session = new ConstructorioID();
-      expect(session.session_is_new).to.be.a.bool;
+      expect(session.session_is_new).to.be.a('boolean');
       expect(session.session_is_new).to.equal(true);
     });
 
@@ -166,7 +164,7 @@ describe('ConstructorioID', function () {
 
     it('should use a session id of 1 if missing', function () {
       var session = new ConstructorioID();
-      expect(session.session_id).to.be.a.number;
+      expect(session.session_id).to.be.a('number');
       expect(session.session_id).to.equal(1);
     });
 

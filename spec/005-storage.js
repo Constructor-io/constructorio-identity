@@ -6,7 +6,9 @@ var ConstructorioID = require('../src/constructorio-id.js');
 
 describe('ConstructorioID', function () {
   beforeEach(function () {
-    var dom = new jsdom.JSDOM();
+    var dom = new jsdom.JSDOM(``, {
+      url: 'http://localhost'
+    });
     global.window = dom.window;
     global.window.localStorage = helper.getStorageMock();
     global.document = dom.window.document;
@@ -38,14 +40,14 @@ describe('ConstructorioID', function () {
     it('should set a local object', function () {
       var session = new ConstructorioID();
       session.set_local_object('adventuretime', { marceline: true });
-      expect(window.localStorage._data.adventuretime).to.be.a.string;
-      expect(JSON.parse(window.localStorage._data.adventuretime)).to.deep.equal({ marceline: true });
+      expect(window.localStorage.adventuretime).to.be.a.string;
+      expect(JSON.parse(window.localStorage.adventuretime)).to.deep.equal({ marceline: true });
     });
 
     it('should not set a non-object', function () {
       var session = new ConstructorioID();
       session.set_local_object('adventuretime', 'We\'re going to very distant lands.');
-      expect(window.localStorage._data.adventuretime).to.be.undefined;
+      expect(window.localStorage.adventuretime).to.be.undefined;
     });
   });
 
@@ -61,7 +63,7 @@ describe('ConstructorioID', function () {
 
       var set_local_object = sinon.spy(ConstructorioID.prototype, 'set_local_object');
       var session_id = session.get_session_id();
-      expect(session_id).to.be.a.number;
+      expect(session_id).to.be.a('number');
       expect(session_id).to.equal(42);
       expect(set_local_object.calledOnce).to.be.true;
       expect(set_local_object.calledWith('_constructorio_search_session')).to.be.true;
@@ -82,7 +84,7 @@ describe('ConstructorioID', function () {
 
       var set_local_object = sinon.spy(ConstructorioID.prototype, 'set_local_object');
       var session_id = session.get_session_id();
-      expect(session_id).to.be.a.number;
+      expect(session_id).to.be.a('number');
       expect(session_id).to.equal(43);
       expect(set_local_object.calledOnce).to.be.true;
       expect(set_local_object.calledWith('_constructorio_search_session')).to.be.true;
@@ -99,7 +101,7 @@ describe('ConstructorioID', function () {
 
       var set_local_object = sinon.spy(ConstructorioID.prototype, 'set_local_object');
       var session_id = session.get_session_id();
-      expect(session_id).to.be.a.number;
+      expect(session_id).to.be.a('number');
       expect(session_id).to.equal(1);
       expect(set_local_object.calledOnce).to.be.true;
       expect(set_local_object.calledWith('_constructorio_search_session')).to.be.true;
