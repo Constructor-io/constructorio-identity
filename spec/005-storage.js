@@ -6,7 +6,7 @@ var ConstructorioID = require('../src/constructorio-id.js');
 
 describe('ConstructorioID', function () {
   beforeEach(function () {
-    var dom = new jsdom.JSDOM(``, {
+    var dom = new jsdom.JSDOM('', {
       url: 'http://localhost'
     });
     global.window = dom.window;

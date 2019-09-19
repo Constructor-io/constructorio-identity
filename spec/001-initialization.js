@@ -50,7 +50,7 @@ describe('ConstructorioID', function () {
 
   describe('when used in browser', function () {
     beforeEach(function () {
-      var dom = new jsdom.JSDOM(``, {
+      var dom = new jsdom.JSDOM('', {
         url: 'http://localhost'
       });
       global.window = dom.window;
