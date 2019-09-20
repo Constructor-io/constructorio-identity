@@ -1,0 +1,39 @@
+{
+  "name": "constructorio-id",
+  "version": "2.0.0",
+  "description": "A JavaScript module for managing identity and sessions",
+  "repository": "https://github.com/Constructor-io/constructorio-identity",
+  "author": "Zubin Tiku (constructor.io)",
+  "license": "MIT",
+  "main": "src/constructorio-id.js",
+  "nyc": {
+    "exclude": [
+      "spec"
+    ]
+  },
+  "scripts": {
+    "clean": "rm -rf node_modules",
+    "format": "eslint --fix ",
+    "lint": "eslint spec/*.js src/*.js",
+    "coverage": "nyc --reporter=html mocha spec/",
+    "postcoverage": "http-server coverage",
+    "test": "mocha spec/"
+  },
+  "pre-push": [
+    "lint"
+  ],
+  "devDependencies": {
+    "babel-eslint": "^10.0.3",
+    "chai": "^4.2.0",
+    "eslint": "^6.4.0",
+    "eslint-config-airbnb-base": "^14.0.0",
+    "eslint-plugin-import": "^2.18.2",
+    "http-server": "^0.11.1",
+    "jsdom": "^15.1.1",
+    "mocha": "^6.2.0",
+    "nyc": "^14.1.1",
+    "pre-push": "^0.1.1",
+    "sinon": "^7.4.2"
+  },
+  "dependencies": {}
+}
