@@ -1,5 +1,5 @@
 {
-  "name": "constructorio-id",
+  "name": "@constructor-io/constructorio-id",
   "version": "2.1.0",
   "description": "A JavaScript module for managing identity and sessions",
   "repository": "https://github.com/Constructor-io/constructorio-identity",
