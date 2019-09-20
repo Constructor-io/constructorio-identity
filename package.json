@@ -14,7 +14,7 @@
   "scripts": {
     "clean": "rm -rf node_modules",
     "format": "eslint --fix ",
-    "lint": "eslint **/*.js",
+    "lint": "eslint spec/*.js src/*.js",
     "coverage": "nyc --reporter=html mocha spec/",
     "postcoverage": "http-server coverage",
     "test": "mocha spec/"
