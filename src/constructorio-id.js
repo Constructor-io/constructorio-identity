@@ -107,7 +107,11 @@
   ConstructorioID.prototype.set_local_object = function (key, obj) {
     var localStorage = window && window.localStorage;
     if (localStorage && typeof key  === 'string' && typeof obj === 'object') {
-      localStorage.setItem(key, JSON.stringify(obj));
+      try {
+        localStorage.setItem(key, JSON.stringify(obj));
+      } catch (e) {
+        // fail silently
+      }
     }
   };
 
