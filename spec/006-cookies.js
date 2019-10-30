@@ -17,10 +17,10 @@ describe('ConstructorioID', function () {
   });
 
   describe('set_cookie', function () {
-    it('should create a cookie', function () {
+    it('should create a cookie with a valid path', function () {
       var session = new ConstructorioID();
-      session.set_cookie('mewantcookie', 'meeatcookie');
-      expect(global.document.cookie).to.match(/mewantcookie=meeatcookie/);
+      var cookieData =  session.set_cookie('mewantcookie', 'meeatcookie');
+      expect(cookieData).to.match(/mewantcookie=meeatcookie; expires=.*; path=\//);
     });
   });
 
