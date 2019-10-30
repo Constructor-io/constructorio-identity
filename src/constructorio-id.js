@@ -47,6 +47,9 @@
         cookie_data += '; domain=' + this.cookie_domain;
       }
       document.cookie = cookie_data;
+
+      // For testing purposes
+      return cookie_data;
     }
   };
 
