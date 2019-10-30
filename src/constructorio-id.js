@@ -51,6 +51,8 @@
       // For testing purposes
       return cookie_data;
     }
+
+    return null;
   };
 
   ConstructorioID.prototype.get_cookie = function (name) {
