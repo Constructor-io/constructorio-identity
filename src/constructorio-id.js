@@ -42,7 +42,7 @@
   ConstructorioID.prototype.set_cookie = function (name, value) {
     if (!this.on_node && this.persist) {
       var expires = new Date(Date.now() + this.cookie_days_to_live * 24 * 60 * 60 * 1000);
-      var cookie_data = name + '=' + value + '; expires=' + expires.toUTCString() + ' path=/';
+      var cookie_data = name + '=' + value + '; expires=' + expires.toUTCString() + '; path=/';
       if (this.cookie_domain) {
         cookie_data += '; domain=' + this.cookie_domain;
       }
