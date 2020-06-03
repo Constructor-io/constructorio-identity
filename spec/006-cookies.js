@@ -39,24 +39,6 @@ describe('ConstructorioID', function () {
     });
   });
 
-  describe('update_cookie', function () {
-    it('should update a matching cookie', function () {
-      document.cookie = 'dummyname=dummyid; expires=Tue, 19 Jan 2038 03:14:07 GMT; path=/';
-      document.cookie = 'ConstructorioAB_veggie=turnips; expires=Tue, 19 Jan 2038 03:14:07 GMT; path=/';
-      var session = new ConstructorioID({ cookie_name_client_id: 'dummyname' });
-      session.update_cookie('ConstructorioID_veggie');
-      expect(document.cookie).to.equal('dummyname=dummyid; ConstructorioID_veggie=turnips');
-    });
-
-    it('should skip a non matching cookie', function () {
-      document.cookie = 'dummyname=dummyid; expires=Tue, 19 Jan 2038 03:14:07 GMT; path=/';
-      document.cookie = 'ConstructorioBC_veggie=turnips; expires=Tue, 19 Jan 2038 03:14:07 GMT; path=/';
-      var session = new ConstructorioID({ cookie_name_client_id: 'dummyname' });
-      session.update_cookie('ConstructorioID_veggie');
-      expect(document.cookie).to.equal('dummyname=dummyid; ConstructorioBC_veggie=turnips');
-    });
-  });
-
   describe('delete_cookie', function () {
     it('should remove a matching cookie', function () {
       document.cookie = 'dummyname=dummyid; expires=Tue, 19 Jan 2038 03:14:07 GMT; path=/';

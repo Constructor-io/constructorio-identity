@@ -26,8 +26,6 @@
         var persisted_id;
 
         if (this.client_id_storage_location === 'cookie') {
-          this.update_cookie(this.cookie_name_client_id);
-
           persisted_id = this.get_cookie(this.cookie_name_client_id);
         }
 
@@ -84,17 +82,6 @@
       }
     }
     return undefined; // eslint-disable-line
-  };
-
-  ConstructorioID.prototype.update_cookie = function (name) {
-    if (name.match(/^ConstructorioID_/)) {
-      var oldName = name.replace(/^ConstructorioID_/, 'ConstructorioAB_');
-      var value = this.get_cookie(oldName);
-      if (value) {
-        this.set_cookie(name, value);
-        this.delete_cookie(oldName);
-      }
-    }
   };
 
   ConstructorioID.prototype.delete_cookie = function (name) {

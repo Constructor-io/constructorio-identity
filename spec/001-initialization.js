@@ -9,7 +9,6 @@ describe('ConstructorioID', function () {
     var expectedKeys = [
       'set_cookie',
       'get_cookie',
-      'update_cookie',
       'delete_cookie',
       'generate_client_id',
       'get_local_object',
@@ -83,13 +82,6 @@ describe('ConstructorioID', function () {
       var session = new ConstructorioID({ cookie_name_client_id: 'dummyname' });
       expect(session.client_id).to.equal('dummyid');
       expect(document.cookie).to.equal('dummyname=dummyid');
-    });
-
-    it('should read the client id from the old cookie', function () {
-      document.cookie = 'ConstructorioAB_client_id=tummyid; expires=Tue, 19 Jan 2038 03:14:07 GMT; path=/';
-      var session = new ConstructorioID();
-      expect(session.client_id).to.equal('tummyid');
-      expect(document.cookie).to.equal('ConstructorioID_client_id=tummyid');
     });
 
     it('should read the client id from the new cookie', function () {
