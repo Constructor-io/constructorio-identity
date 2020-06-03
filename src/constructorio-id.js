@@ -16,7 +16,7 @@
       on_node: typeof window === 'undefined',
       session_is_new: null,
       client_id_storage_location: 'cookie',
-      session_id_storage_location: 'local',
+      session_id_storage_location: 'local'
     };
 
     Object.assign(this, defaults, options);

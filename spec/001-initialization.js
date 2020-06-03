@@ -24,6 +24,11 @@ describe('ConstructorioID', function () {
     expect(session.user_agent).to.be.null;
     expect(session.persist).to.be.true;
     expect(session.cookie_name_client_id).to.equal('ConstructorioID_client_id');
+    expect(session.cookie_name_session_id).to.equal('ConstructorioID_session_id');
+    expect(session.local_name_client_id).to.equal('_constructorio_search_client');
+    expect(session.local_name_session_id).to.equal('_constructorio_search_session');
+    expect(session.client_id_storage_location).to.equal('cookie');
+    expect(session.session_id_storage_location).to.equal('local');
     expect(session.cookie_domain).to.be.null;
   });
 
@@ -34,18 +39,28 @@ describe('ConstructorioID', function () {
       user_agent: 'dummyagent',
       timeout: 1,
       persist: false,
-      cookie_name_client_id: 'dummyname',
+      cookie_name_client_id: 'dummyclientname',
+      cookie_name_session_id: 'dummysessionname',
+      local_name_client_id: 'dummyclientnamelocal',
+      local_name_session_id: 'dummysessionnamelocal',
       cookie_prefix_for_experiment: 'dummyprefix',
-      cookie_domain: 'dummydomain'
+      cookie_domain: 'dummydomain',
+      client_id_storage_location: 'foo',
+      session_id_storage_location: 'bar'
     });
     expect(session.base_url).to.equal('dummyurl');
     expect(session.ip_address).to.equal('dummyip');
     expect(session.user_agent).to.equal('dummyagent');
     expect(session.timeout).to.equal(1);
     expect(session.persist).to.be.false;
-    expect(session.cookie_name_client_id).to.equal('dummyname');
+    expect(session.cookie_name_client_id).to.equal('dummyclientname');
+    expect(session.cookie_name_session_id).to.equal('dummysessionname');
+    expect(session.local_name_client_id).to.equal('dummyclientnamelocal');
+    expect(session.local_name_session_id).to.equal('dummysessionnamelocal');
     expect(session.cookie_prefix_for_experiment).to.equal('dummyprefix');
     expect(session.cookie_domain).to.equal('dummydomain');
+    expect(session.client_id_storage_location).to.equal('foo');
+    expect(session.session_id_storage_location).to.equal('bar');
   });
 
   describe('when used in browser', function () {
