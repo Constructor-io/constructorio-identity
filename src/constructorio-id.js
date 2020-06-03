@@ -102,6 +102,10 @@
       this.set_cookie(this.cookie_name_client_id, client_id);
     }
 
+    if (this.client_id_storage_location === 'session') {
+      this.set_local_object(this.local_name_client_id, client_id);
+    }
+
     return client_id;
   };
 
@@ -151,6 +155,13 @@
         sessionId: sessionId,
         lastTime: now
       });
+    }
+
+    if (this.session_id_storage_location === 'cookie') {
+      this.set_cookie(this.cookie_name_session_id, JSON.stringify({
+        sessionId: sessionId,
+        lastTime: now
+      }));
     }
 
     return sessionId;
