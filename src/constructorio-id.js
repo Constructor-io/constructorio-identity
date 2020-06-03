@@ -7,7 +7,7 @@
     var defaults = {
       user_agent: null,
       persist: true,
-      cookie_name: 'ConstructorioID_client_id',
+      cookie_name_client_id: 'ConstructorioID_client_id',
       cookie_domain: null,
       cookie_days_to_live: 365,
       on_node: typeof window === 'undefined',
@@ -18,8 +18,8 @@
 
     if (!this.client_id) {
       if (!this.on_node && this.persist) {
-        this.update_cookie(this.cookie_name);
-        var persisted_id = this.get_cookie(this.cookie_name);
+        this.update_cookie(this.cookie_name_client_id);
+        var persisted_id = this.get_cookie(this.cookie_name_client_id);
         this.client_id = persisted_id ? persisted_id : this.generate_client_id();
       } else {
         this.client_id = this.generate_client_id();
@@ -28,7 +28,7 @@
 
     if (!this.session_id) {
       if (!this.on_node && this.persist) {
-        this.session_id = this.get_session_id();
+        this.session_id = this.generate_session_id();
       } else {
         this.session_id = 1;
       }
@@ -92,7 +92,9 @@
       var v = c === 'x' ? r : (r & 0x3 | 0x8);
       return v.toString(16);
     });
-    this.set_cookie(this.cookie_name, client_id);
+
+    this.set_cookie(this.cookie_name_client_id, client_id);
+
     return client_id;
   };
 
@@ -120,7 +122,7 @@
     }
   };
 
-  ConstructorioID.prototype.get_session_id = function () {
+  ConstructorioID.prototype.generate_session_id = function () {
     var now = Date.now();
     var thirtyMinutes = 1000 * 60 * 30;
     var sessionKey = '_constructorio_search_session';

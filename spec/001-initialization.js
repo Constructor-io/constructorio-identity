@@ -14,7 +14,7 @@ describe('ConstructorioID', function () {
       'generate_client_id',
       'get_local_object',
       'set_local_object',
-      'get_session_id'
+      'generate_session_id'
     ];
     expect(actualKeys).to.eql(expectedKeys);
   });
@@ -23,7 +23,7 @@ describe('ConstructorioID', function () {
     var session = new ConstructorioID();
     expect(session.user_agent).to.be.null;
     expect(session.persist).to.be.true;
-    expect(session.cookie_name).to.equal('ConstructorioID_client_id');
+    expect(session.cookie_name_client_id).to.equal('ConstructorioID_client_id');
     expect(session.cookie_domain).to.be.null;
   });
 
@@ -34,7 +34,7 @@ describe('ConstructorioID', function () {
       user_agent: 'dummyagent',
       timeout: 1,
       persist: false,
-      cookie_name: 'dummyname',
+      cookie_name_client_id: 'dummyname',
       cookie_prefix_for_experiment: 'dummyprefix',
       cookie_domain: 'dummydomain'
     });
@@ -43,7 +43,7 @@ describe('ConstructorioID', function () {
     expect(session.user_agent).to.equal('dummyagent');
     expect(session.timeout).to.equal(1);
     expect(session.persist).to.be.false;
-    expect(session.cookie_name).to.equal('dummyname');
+    expect(session.cookie_name_client_id).to.equal('dummyname');
     expect(session.cookie_prefix_for_experiment).to.equal('dummyprefix');
     expect(session.cookie_domain).to.equal('dummydomain');
   });
@@ -65,7 +65,7 @@ describe('ConstructorioID', function () {
 
     it('should read the client id from a named cookie', function () {
       document.cookie = 'dummyname=dummyid; expires=Tue, 19 Jan 2038 03:14:07 GMT; path=/';
-      var session = new ConstructorioID({ cookie_name: 'dummyname' });
+      var session = new ConstructorioID({ cookie_name_client_id: 'dummyname' });
       expect(session.client_id).to.equal('dummyid');
       expect(document.cookie).to.equal('dummyname=dummyid');
     });
@@ -85,7 +85,7 @@ describe('ConstructorioID', function () {
     });
 
     it('should set the client id if missing', function () {
-      var session = new ConstructorioID({ cookie_name: 'missingname' });
+      var session = new ConstructorioID({ cookie_name_client_id: 'missingname' });
       expect(session.client_id).to.be.a.string;
       expect(session.client_id).to.match(/(\w|d|-){36}/);
     });

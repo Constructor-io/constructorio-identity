@@ -43,7 +43,7 @@ describe('ConstructorioID', function () {
     it('should update a matching cookie', function () {
       document.cookie = 'dummyname=dummyid; expires=Tue, 19 Jan 2038 03:14:07 GMT; path=/';
       document.cookie = 'ConstructorioAB_veggie=turnips; expires=Tue, 19 Jan 2038 03:14:07 GMT; path=/';
-      var session = new ConstructorioID({ cookie_name: 'dummyname' });
+      var session = new ConstructorioID({ cookie_name_client_id: 'dummyname' });
       session.update_cookie('ConstructorioID_veggie');
       expect(document.cookie).to.equal('dummyname=dummyid; ConstructorioID_veggie=turnips');
     });
@@ -51,7 +51,7 @@ describe('ConstructorioID', function () {
     it('should skip a non matching cookie', function () {
       document.cookie = 'dummyname=dummyid; expires=Tue, 19 Jan 2038 03:14:07 GMT; path=/';
       document.cookie = 'ConstructorioBC_veggie=turnips; expires=Tue, 19 Jan 2038 03:14:07 GMT; path=/';
-      var session = new ConstructorioID({ cookie_name: 'dummyname' });
+      var session = new ConstructorioID({ cookie_name_client_id: 'dummyname' });
       session.update_cookie('ConstructorioID_veggie');
       expect(document.cookie).to.equal('dummyname=dummyid; ConstructorioBC_veggie=turnips');
     });
@@ -61,7 +61,7 @@ describe('ConstructorioID', function () {
     it('should remove a matching cookie', function () {
       document.cookie = 'dummyname=dummyid; expires=Tue, 19 Jan 2038 03:14:07 GMT; path=/';
       document.cookie = 'deleteme=now; expires=Tue, 19 Jan 2038 03:14:07 GMT; path=/';
-      var session = new ConstructorioID({ cookie_name: 'dummyname' });
+      var session = new ConstructorioID({ cookie_name_client_id: 'dummyname' });
       session.delete_cookie('deleteme');
       expect(document.cookie).to.equal('dummyname=dummyid');
     });
@@ -69,7 +69,7 @@ describe('ConstructorioID', function () {
     it('should skip a non-matching cookie', function () {
       document.cookie = 'dummyname=dummyid; expires=Tue, 19 Jan 2038 03:14:07 GMT; path=/';
       document.cookie = 'skipme=now; expires=Tue, 19 Jan 2038 03:14:07 GMT; path=/';
-      var session = new ConstructorioID({ cookie_name: 'dummyname' });
+      var session = new ConstructorioID({ cookie_name_client_id: 'dummyname' });
       session.delete_cookie('deleteme');
       expect(document.cookie).to.equal('dummyname=dummyid; skipme=now');
     });
@@ -77,7 +77,7 @@ describe('ConstructorioID', function () {
 
   describe('generate_client_id', function () {
     it('should return a client id and set the cookie', function () {
-      var session = new ConstructorioID({ cookie_name: 'monster' });
+      var session = new ConstructorioID({ cookie_name_client_id: 'monster' });
       var client_id = session.generate_client_id();
       expect(session.get_cookie('monster')).to.equal(client_id);
       expect(client_id).to.be.a.string;

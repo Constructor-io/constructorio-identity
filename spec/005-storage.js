@@ -51,7 +51,7 @@ describe('ConstructorioID', function () {
     });
   });
 
-  describe('get_session_id', function () {
+  describe('generate_session_id', function () {
     it('should return a session id from local storage if recent', function () {
       var now = Date.now();
       var session = new ConstructorioID();
@@ -62,7 +62,7 @@ describe('ConstructorioID', function () {
       }));
 
       var set_local_object = sinon.spy(ConstructorioID.prototype, 'set_local_object');
-      var session_id = session.get_session_id();
+      var session_id = session.generate_session_id();
       expect(session_id).to.be.a('number');
       expect(session_id).to.equal(42);
       expect(set_local_object.calledOnce).to.be.true;
@@ -83,7 +83,7 @@ describe('ConstructorioID', function () {
       }));
 
       var set_local_object = sinon.spy(ConstructorioID.prototype, 'set_local_object');
-      var session_id = session.get_session_id();
+      var session_id = session.generate_session_id();
       expect(session_id).to.be.a('number');
       expect(session_id).to.equal(43);
       expect(set_local_object.calledOnce).to.be.true;
@@ -100,7 +100,7 @@ describe('ConstructorioID', function () {
       window.localStorage.clear();
 
       var set_local_object = sinon.spy(ConstructorioID.prototype, 'set_local_object');
-      var session_id = session.get_session_id();
+      var session_id = session.generate_session_id();
       expect(session_id).to.be.a('number');
       expect(session_id).to.equal(1);
       expect(set_local_object.calledOnce).to.be.true;
