@@ -32,8 +32,6 @@
         }
 
         if (this.client_id_storage_location === 'local') {
-          this.update_cookie(this.cookie_name_client_id);
-
           persisted_id = this.get_local_object(this.local_name_client_id);
         }
 
@@ -128,7 +126,12 @@
       try {
         data = JSON.parse(localStorage.getItem(key));
       } catch (e) {
-        // fail silently
+        if (
+          (key === this.local_name_client_id && this.client_id_storage_location === 'local')
+          || (key === this.local_name_session_id && this.session_id_storage_location === 'local')
+        ) {
+          data = localStorage.getItem(key);
+        }
       }
     }
     return data;

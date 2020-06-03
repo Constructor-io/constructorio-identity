@@ -105,6 +105,26 @@ describe('ConstructorioID', function () {
       expect(session.client_id).to.match(/(\w|d|-){36}/);
     });
 
+    it('should read the client id from local storage and storage location is set to local', function () {
+      window.localStorage.setItem('dummyname', 'dummyid');
+      var session = new ConstructorioID({ local_name_client_id: 'dummyname', client_id_storage_location: 'local' } );
+      expect(session.client_id).to.equal('dummyid');
+      expect(window.localStorage.getItem('dummyname')).to.equal('dummyid');
+    });
+
+    it('should read the client id from the default local storage key and storage location is set to local', function () {
+      window.localStorage.setItem('_constructorio_search_client', 'bummyid');
+      var session = new ConstructorioID({ client_id_storage_location: 'local' });
+      expect(session.client_id).to.equal('bummyid');
+      expect(window.localStorage.getItem('_constructorio_search_client')).to.equal('bummyid');
+    });
+
+    it('should set the client id if missing and storage location is set to local', function () {
+      var session = new ConstructorioID({ cookie_name_client_id: 'missingname', client_id_storage_location: 'local' });
+      expect(session.client_id).to.be.a.string;
+      expect(session.client_id).to.match(/(\w|d|-){36}/);
+    });
+
     it('should read the session id from local storage data', function () {
       window.localStorage.setItem('_constructorio_search_session', JSON.stringify({
         sessionId: 42,
