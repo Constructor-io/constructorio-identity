@@ -23,8 +23,20 @@
 
     if (!this.client_id) {
       if (!this.on_node && this.persist) {
-        this.update_cookie(this.cookie_name_client_id);
-        var persisted_id = this.get_cookie(this.cookie_name_client_id);
+        var persisted_id;
+
+        if (this.client_id_storage_location === 'cookie') {
+          this.update_cookie(this.cookie_name_client_id);
+
+          persisted_id = this.get_cookie(this.cookie_name_client_id);
+        }
+
+        if (this.client_id_storage_location === 'local') {
+          this.update_cookie(this.cookie_name_client_id);
+
+          persisted_id = this.get_local_object(this.local_name_client_id);
+        }
+
         this.client_id = persisted_id ? persisted_id : this.generate_client_id();
       } else {
         this.client_id = this.generate_client_id();
@@ -136,7 +148,22 @@
   ConstructorioID.prototype.generate_session_id = function () {
     var now = Date.now();
     var thirtyMinutes = 1000 * 60 * 30;
-    var sessionData = this.get_local_object(this.local_name_session_id);
+    var sessionData;
+
+    if (this.session_id_storage_location === 'local') {
+      sessionData = this.get_local_object(this.local_name_session_id);
+    }
+
+    if (this.session_id_storage_location === 'cookie') {
+      sessionData = this.get_cookie(this.local_name_session_id);
+
+      try {
+        sessionData = JSON.parse(sessionData);
+      } catch (e) {
+        return false;
+      }
+    }
+
     var sessionId = 1;
 
     if (sessionData) {
