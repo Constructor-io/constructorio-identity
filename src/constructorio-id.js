@@ -8,10 +8,15 @@
       user_agent: null,
       persist: true,
       cookie_name_client_id: 'ConstructorioID_client_id',
+      cookie_name_session_id: 'ConstructorioID_session_id',
       cookie_domain: null,
       cookie_days_to_live: 365,
+      local_name_client_id: '_constructorio_search_client',
+      local_name_session_id: '_constructorio_search_session',
       on_node: typeof window === 'undefined',
-      session_is_new: null
+      session_is_new: null,
+      client_id_storage_location: 'cookie',
+      session_id_storage_location: 'local',
     };
 
     Object.assign(this, defaults, options);
@@ -93,7 +98,9 @@
       return v.toString(16);
     });
 
-    this.set_cookie(this.cookie_name_client_id, client_id);
+    if (this.client_id_storage_location === 'cookie') {
+      this.set_cookie(this.cookie_name_client_id, client_id);
+    }
 
     return client_id;
   };
@@ -125,8 +132,7 @@
   ConstructorioID.prototype.generate_session_id = function () {
     var now = Date.now();
     var thirtyMinutes = 1000 * 60 * 30;
-    var sessionKey = '_constructorio_search_session';
-    var sessionData = this.get_local_object(sessionKey);
+    var sessionData = this.get_local_object(this.local_name_session_id);
     var sessionId = 1;
 
     if (sessionData) {
@@ -139,10 +145,13 @@
 
     this.session_id = sessionId;
     this.session_is_new = sessionData && sessionData.sessionId === sessionId ? false : true;
-    this.set_local_object(sessionKey, {
-      sessionId: sessionId,
-      lastTime: now
-    });
+
+    if (this.session_id_storage_location === 'local') {
+      this.set_local_object(this.local_name_session_id, {
+        sessionId: sessionId,
+        lastTime: now
+      });
+    }
 
     return sessionId;
   };
