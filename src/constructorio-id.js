@@ -145,12 +145,12 @@
     }
 
     if (this.session_id_storage_location === 'cookie') {
-      sessionData = this.get_cookie(this.local_name_session_id);
+      sessionData = this.get_cookie(this.cookie_name_session_id);
 
       try {
         sessionData = JSON.parse(sessionData);
       } catch (e) {
-        return false;
+        // fail silently
       }
     }
 
