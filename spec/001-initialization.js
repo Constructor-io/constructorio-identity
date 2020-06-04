@@ -97,7 +97,7 @@ describe('ConstructorioID', function () {
       expect(session.client_id).to.match(/(\w|d|-){36}/);
     });
 
-    it('should read the client id from local storage and storage location is set to local', function () {
+    it('should read the client id from local storage if storage location is set to local', function () {
       window.localStorage.setItem('dummyname', 'dummyid');
       var session = new ConstructorioID({ local_name_client_id: 'dummyname', client_id_storage_location: 'local' } );
       expect(session.client_id).to.equal('dummyid');
@@ -133,7 +133,7 @@ describe('ConstructorioID', function () {
       expect(session.session_id).to.equal(1);
     });
 
-    it('should read the session id from cookie and storage location is set to cookie', function () {
+    it('should read the session id from cookie if storage location is set to cookie', function () {
       document.cookie = `ConstructorioID_session_id={"sessionId":42,"lastTime":${Date.now()}}; expires=Tue, 19 Jan 2038 03:14:07 GMT; path=/`;
       var session = new ConstructorioID({ session_id_storage_location: 'cookie' });
       expect(session.session_id).to.be.a('number');
@@ -186,6 +186,12 @@ describe('ConstructorioID', function () {
 
     it('should set session_is_new to true if there is no local storage data', function () {
       var session = new ConstructorioID();
+      expect(session.session_is_new).to.be.a('boolean');
+      expect(session.session_is_new).to.equal(true);
+    });
+
+    it('should set session_is_new to true if there is no cookie data and storage location is set to cookie', function () {
+      var session = new ConstructorioID({ session_id_storage_location: 'cookie' });
       expect(session.session_is_new).to.be.a('boolean');
       expect(session.session_is_new).to.equal(true);
     });
