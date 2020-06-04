@@ -43,12 +43,6 @@ describe('ConstructorioID', function () {
       expect(window.localStorage.adventuretime).to.be.a.string;
       expect(JSON.parse(window.localStorage.adventuretime)).to.deep.equal({ marceline: true });
     });
-
-    it('should not set a non-object', function () {
-      var session = new ConstructorioID();
-      session.set_local_object('adventuretime', 'We\'re going to very distant lands.');
-      expect(window.localStorage.adventuretime).to.be.undefined;
-    });
   });
 
   describe('generate_session_id', function () {

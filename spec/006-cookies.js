@@ -65,5 +65,13 @@ describe('ConstructorioID', function () {
       expect(client_id).to.be.a.string;
       expect(client_id).to.match(/(\w|d|-){36}/);
     });
+
+    it('should return a client id and set local storage value if storage location is set to local', function () {
+      var session = new ConstructorioID({ local_name_client_id: 'monster', client_id_storage_location: 'local' });
+      var client_id = session.generate_client_id();
+      expect(session.get_local_object('monster')).to.equal(client_id);
+      expect(client_id).to.be.a.string;
+      expect(client_id).to.match(/(\w|d|-){36}/);
+    });
   });
 });

@@ -99,7 +99,7 @@
       this.set_cookie(this.cookie_name_client_id, client_id);
     }
 
-    if (this.client_id_storage_location === 'session') {
+    if (this.client_id_storage_location === 'local') {
       this.set_local_object(this.local_name_client_id, client_id);
     }
 
@@ -124,13 +124,24 @@
     return data;
   };
 
-  ConstructorioID.prototype.set_local_object = function (key, obj) {
+  ConstructorioID.prototype.set_local_object = function (key, data) {
     var localStorage = window && window.localStorage;
-    if (localStorage && typeof key  === 'string' && typeof obj === 'object') {
-      try {
-        localStorage.setItem(key, JSON.stringify(obj));
-      } catch (e) {
-        // fail silently
+
+    if (localStorage && typeof key === 'string') {
+      if (typeof data === 'object') {
+        try {
+          localStorage.setItem(key, JSON.stringify(data));
+        } catch (e) {
+          // fail silently
+        }
+      }
+
+      if (typeof data === 'string') {
+        try {
+          localStorage.setItem(key, data);
+        } catch (e) {
+          // fail silently
+        }
       }
     }
   };
