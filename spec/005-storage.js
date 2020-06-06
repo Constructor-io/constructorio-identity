@@ -28,11 +28,11 @@ describe('ConstructorioID', function () {
       expect(adventuretime.jake).to.be.true;
     });
 
-    it('should not return a non-object', function () {
+    it('should not return a local string', function () {
       window.localStorage.setItem('adventuretime', 'Come on grab your friends');
       var session = new ConstructorioID();
       var adventuretime = session.get_local_object('adventuretime');
-      expect(adventuretime).to.be.undefined;
+      expect(adventuretime).to.equal('Come on grab your friends');
     });
   });
 
@@ -67,7 +67,7 @@ describe('ConstructorioID', function () {
       set_local_object.restore();
     });
 
-    it('should return a session id in cookie if recent and storage location is set to cookie', function () {
+    it('should return the same session id from cookie if recent and the storage location is set to cookie', function () {
       var now = Date.now();
       var session = new ConstructorioID({ session_id_storage_location: 'cookie' });
       document.cookie = `ConstructorioID_session_id={"sessionId":42,"lastTime":${now}}; expires=Tue, 19 Jan 2038 03:14:07 GMT; path=/`;

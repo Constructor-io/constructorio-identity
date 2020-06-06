@@ -22,8 +22,8 @@ describe('ConstructorioID', function () {
     var session = new ConstructorioID();
     expect(session.user_agent).to.be.null;
     expect(session.persist).to.be.true;
-    expect(session.cookie_name_client_id).to.equal('ConstructorioID_client_id');
-    expect(session.cookie_name_session_id).to.equal('ConstructorioID_session_id');
+    expect(session.client_id_cookie_name).to.equal('ConstructorioID_client_id');
+    expect(session.session_id_cookie_name).to.equal('ConstructorioID_session_id');
     expect(session.local_name_client_id).to.equal('_constructorio_search_client');
     expect(session.local_name_session_id).to.equal('_constructorio_search_session');
     expect(session.client_id_storage_location).to.equal('cookie');
@@ -38,8 +38,8 @@ describe('ConstructorioID', function () {
       user_agent: 'dummyagent',
       timeout: 1,
       persist: false,
-      cookie_name_client_id: 'dummyclientname',
-      cookie_name_session_id: 'dummysessionname',
+      client_id_cookie_name: 'dummyclientname',
+      session_id_cookie_name: 'dummysessionname',
       local_name_client_id: 'dummyclientnamelocal',
       local_name_session_id: 'dummysessionnamelocal',
       cookie_prefix_for_experiment: 'dummyprefix',
@@ -52,8 +52,8 @@ describe('ConstructorioID', function () {
     expect(session.user_agent).to.equal('dummyagent');
     expect(session.timeout).to.equal(1);
     expect(session.persist).to.be.false;
-    expect(session.cookie_name_client_id).to.equal('dummyclientname');
-    expect(session.cookie_name_session_id).to.equal('dummysessionname');
+    expect(session.client_id_cookie_name).to.equal('dummyclientname');
+    expect(session.session_id_cookie_name).to.equal('dummysessionname');
     expect(session.local_name_client_id).to.equal('dummyclientnamelocal');
     expect(session.local_name_session_id).to.equal('dummysessionnamelocal');
     expect(session.cookie_prefix_for_experiment).to.equal('dummyprefix');
@@ -79,12 +79,12 @@ describe('ConstructorioID', function () {
 
     it('should read the client id from a named cookie', function () {
       document.cookie = 'dummyname=dummyid; expires=Tue, 19 Jan 2038 03:14:07 GMT; path=/';
-      var session = new ConstructorioID({ cookie_name_client_id: 'dummyname' });
+      var session = new ConstructorioID({ client_id_cookie_name: 'dummyname' });
       expect(session.client_id).to.equal('dummyid');
       expect(document.cookie).to.equal('dummyname=dummyid');
     });
 
-    it('should read the client id from the default cookie name', function () {
+    it('should set the client id if missing from the default storage location', function () {
       document.cookie = 'ConstructorioID_client_id=bummyid; expires=Tue, 19 Jan 2038 03:14:07 GMT; path=/';
       var session = new ConstructorioID();
       expect(session.client_id).to.equal('bummyid');
@@ -92,7 +92,7 @@ describe('ConstructorioID', function () {
     });
 
     it('should set the client id if missing', function () {
-      var session = new ConstructorioID({ cookie_name_client_id: 'missingname' });
+      var session = new ConstructorioID({ client_id_cookie_name: 'missingname' });
       expect(session.client_id).to.be.a.string;
       expect(session.client_id).to.match(/(\w|d|-){36}/);
     });
@@ -112,7 +112,7 @@ describe('ConstructorioID', function () {
     });
 
     it('should set the client id if missing and storage location is set to local', function () {
-      var session = new ConstructorioID({ cookie_name_client_id: 'missingname', client_id_storage_location: 'local' });
+      var session = new ConstructorioID({ client_id_cookie_name: 'missingname', client_id_storage_location: 'local' });
       expect(session.client_id).to.be.a.string;
       expect(session.client_id).to.match(/(\w|d|-){36}/);
     });

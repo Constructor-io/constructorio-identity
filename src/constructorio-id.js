@@ -7,8 +7,8 @@
     var defaults = {
       user_agent: null,
       persist: true,
-      cookie_name_client_id: 'ConstructorioID_client_id',
-      cookie_name_session_id: 'ConstructorioID_session_id',
+      client_id_cookie_name: 'ConstructorioID_client_id',
+      session_id_cookie_name: 'ConstructorioID_session_id',
       cookie_domain: null,
       cookie_days_to_live: 365,
       local_name_client_id: '_constructorio_search_client',
@@ -26,7 +26,7 @@
         var persisted_id;
 
         if (this.client_id_storage_location === 'cookie') {
-          persisted_id = this.get_cookie(this.cookie_name_client_id);
+          persisted_id = this.get_cookie(this.client_id_cookie_name);
         }
 
         if (this.client_id_storage_location === 'local') {
@@ -96,7 +96,7 @@
     });
 
     if (this.client_id_storage_location === 'cookie') {
-      this.set_cookie(this.cookie_name_client_id, client_id);
+      this.set_cookie(this.client_id_cookie_name, client_id);
     }
 
     if (this.client_id_storage_location === 'local') {
@@ -151,7 +151,7 @@
     }
 
     if (this.session_id_storage_location === 'cookie') {
-      sessionData = this.get_cookie(this.cookie_name_session_id);
+      sessionData = this.get_cookie(this.session_id_cookie_name);
 
       try {
         sessionData = JSON.parse(sessionData);
@@ -181,7 +181,7 @@
     }
 
     if (this.session_id_storage_location === 'cookie') {
-      this.set_cookie(this.cookie_name_session_id, JSON.stringify({
+      this.set_cookie(this.session_id_cookie_name, JSON.stringify({
         sessionId: sessionId,
         lastTime: now
       }));
