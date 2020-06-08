@@ -7,19 +7,32 @@
     var defaults = {
       user_agent: null,
       persist: true,
-      cookie_name: 'ConstructorioID_client_id',
+      client_id_cookie_name: 'ConstructorioID_client_id',
+      session_id_cookie_name: 'ConstructorioID_session_id',
       cookie_domain: null,
       cookie_days_to_live: 365,
+      local_name_client_id: '_constructorio_search_client',
+      local_name_session_id: '_constructorio_search_session',
       on_node: typeof window === 'undefined',
-      session_is_new: null
+      session_is_new: null,
+      client_id_storage_location: 'cookie',
+      session_id_storage_location: 'local'
     };
 
     Object.assign(this, defaults, options);
 
     if (!this.client_id) {
       if (!this.on_node && this.persist) {
-        this.update_cookie(this.cookie_name);
-        var persisted_id = this.get_cookie(this.cookie_name);
+        var persisted_id;
+
+        if (this.client_id_storage_location === 'cookie') {
+          persisted_id = this.get_cookie(this.client_id_cookie_name);
+        }
+
+        if (this.client_id_storage_location === 'local') {
+          persisted_id = this.get_local_object(this.local_name_client_id);
+        }
+
         this.client_id = persisted_id ? persisted_id : this.generate_client_id();
       } else {
         this.client_id = this.generate_client_id();
@@ -28,7 +41,7 @@
 
     if (!this.session_id) {
       if (!this.on_node && this.persist) {
-        this.session_id = this.get_session_id();
+        this.session_id = this.generate_session_id();
       } else {
         this.session_id = 1;
       }
@@ -71,17 +84,6 @@
     return undefined; // eslint-disable-line
   };
 
-  ConstructorioID.prototype.update_cookie = function (name) {
-    if (name.match(/^ConstructorioID_/)) {
-      var oldName = name.replace(/^ConstructorioID_/, 'ConstructorioAB_');
-      var value = this.get_cookie(oldName);
-      if (value) {
-        this.set_cookie(name, value);
-        this.delete_cookie(oldName);
-      }
-    }
-  };
-
   ConstructorioID.prototype.delete_cookie = function (name) {
     document.cookie = name + '=;expires=Thu, 01 Jan 1970 00:00:01 GMT;';
   };
@@ -92,7 +94,15 @@
       var v = c === 'x' ? r : (r & 0x3 | 0x8);
       return v.toString(16);
     });
-    this.set_cookie(this.cookie_name, client_id);
+
+    if (this.client_id_storage_location === 'cookie') {
+      this.set_cookie(this.client_id_cookie_name, client_id);
+    }
+
+    if (this.client_id_storage_location === 'local') {
+      this.set_local_object(this.local_name_client_id, client_id);
+    }
+
     return client_id;
   };
 
@@ -103,28 +113,53 @@
       try {
         data = JSON.parse(localStorage.getItem(key));
       } catch (e) {
-        // fail silently
+        data = localStorage.getItem(key);
       }
     }
     return data;
   };
 
-  ConstructorioID.prototype.set_local_object = function (key, obj) {
+  ConstructorioID.prototype.set_local_object = function (key, data) {
     var localStorage = window && window.localStorage;
-    if (localStorage && typeof key  === 'string' && typeof obj === 'object') {
-      try {
-        localStorage.setItem(key, JSON.stringify(obj));
-      } catch (e) {
-        // fail silently
+
+    if (localStorage && typeof key === 'string') {
+      if (typeof data === 'object') {
+        try {
+          localStorage.setItem(key, JSON.stringify(data));
+        } catch (e) {
+          // fail silently
+        }
+      }
+
+      if (typeof data === 'string') {
+        try {
+          localStorage.setItem(key, data);
+        } catch (e) {
+          // fail silently
+        }
       }
     }
   };
 
-  ConstructorioID.prototype.get_session_id = function () {
+  ConstructorioID.prototype.generate_session_id = function () {
     var now = Date.now();
     var thirtyMinutes = 1000 * 60 * 30;
-    var sessionKey = '_constructorio_search_session';
-    var sessionData = this.get_local_object(sessionKey);
+    var sessionData;
+
+    if (this.session_id_storage_location === 'local') {
+      sessionData = this.get_local_object(this.local_name_session_id);
+    }
+
+    if (this.session_id_storage_location === 'cookie') {
+      sessionData = this.get_cookie(this.session_id_cookie_name);
+
+      try {
+        sessionData = JSON.parse(sessionData);
+      } catch (e) {
+        // fail silently
+      }
+    }
+
     var sessionId = 1;
 
     if (sessionData) {
@@ -137,10 +172,20 @@
 
     this.session_id = sessionId;
     this.session_is_new = sessionData && sessionData.sessionId === sessionId ? false : true;
-    this.set_local_object(sessionKey, {
-      sessionId: sessionId,
-      lastTime: now
-    });
+
+    if (this.session_id_storage_location === 'local') {
+      this.set_local_object(this.local_name_session_id, {
+        sessionId: sessionId,
+        lastTime: now
+      });
+    }
+
+    if (this.session_id_storage_location === 'cookie') {
+      this.set_cookie(this.session_id_cookie_name, JSON.stringify({
+        sessionId: sessionId,
+        lastTime: now
+      }));
+    }
 
     return sessionId;
   };
