@@ -109,34 +109,26 @@
   ConstructorioID.prototype.get_local_object = function (key) {
     var data;
     var localStorage = window && window.localStorage;
+
     if (localStorage && typeof key  === 'string') {
       try {
-        data = JSON.parse(localStorage.getItem(key));
-      } catch (e) {
         data = localStorage.getItem(key);
+      } catch (e) {
+        // fail silently
       }
     }
+
     return data;
   };
 
   ConstructorioID.prototype.set_local_object = function (key, data) {
     var localStorage = window && window.localStorage;
 
-    if (localStorage && typeof key === 'string') {
-      if (typeof data === 'object') {
-        try {
-          localStorage.setItem(key, JSON.stringify(data));
-        } catch (e) {
-          // fail silently
-        }
-      }
-
-      if (typeof data === 'string') {
-        try {
-          localStorage.setItem(key, data);
-        } catch (e) {
-          // fail silently
-        }
+    if (localStorage && typeof key === 'string' && typeof data === 'string') {
+      try {
+        localStorage.setItem(key, data);
+      } catch (e) {
+        // fail silently
       }
     }
   };
@@ -144,20 +136,24 @@
   ConstructorioID.prototype.generate_session_id = function () {
     var now = Date.now();
     var thirtyMinutes = 1000 * 60 * 30;
+    var sessionDataString;
+    var sessionDataSplit;
     var sessionData;
 
     if (this.session_id_storage_location === 'local') {
-      sessionData = this.get_local_object(this.local_name_session_id);
+      sessionDataString = this.get_local_object(this.local_name_session_id);
     }
 
     if (this.session_id_storage_location === 'cookie') {
-      sessionData = this.get_cookie(this.session_id_cookie_name);
+      sessionDataString = this.get_cookie(this.session_id_cookie_name);
+    }
 
-      try {
-        sessionData = JSON.parse(sessionData);
-      } catch (e) {
-        // fail silently
-      }
+    if (sessionDataString) {
+      sessionDataSplit = sessionDataString && sessionDataString.split('|');
+      sessionData = {
+        sessionId: parseInt(sessionDataSplit && sessionDataSplit[0], 10),
+        lastTime: parseInt(sessionDataSplit && sessionDataSplit[1], 10)
+      };
     }
 
     var sessionId = 1;
@@ -174,17 +170,11 @@
     this.session_is_new = sessionData && sessionData.sessionId === sessionId ? false : true;
 
     if (this.session_id_storage_location === 'local') {
-      this.set_local_object(this.local_name_session_id, {
-        sessionId: sessionId,
-        lastTime: now
-      });
+      this.set_local_object(this.local_name_session_id, sessionId + '|' + now);
     }
 
     if (this.session_id_storage_location === 'cookie') {
-      this.set_cookie(this.session_id_cookie_name, JSON.stringify({
-        sessionId: sessionId,
-        lastTime: now
-      }));
+      this.set_cookie(this.session_id_cookie_name, sessionId + '|' + now);
     }
 
     return sessionId;

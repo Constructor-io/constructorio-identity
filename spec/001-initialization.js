@@ -118,10 +118,9 @@ describe('ConstructorioID', function () {
     });
 
     it('should read the session id from local storage data', function () {
-      window.localStorage.setItem('_constructorio_search_session', JSON.stringify({
-        sessionId: 42,
-        lastTime: Date.now()
-      }));
+      const sessionId = 42;
+      const lastTime = Date.now();
+      window.localStorage.setItem('_constructorio_search_session', sessionId + '|' + lastTime);
       var session = new ConstructorioID();
       expect(session.session_id).to.be.a('number');
       expect(session.session_id).to.equal(42);
@@ -134,10 +133,12 @@ describe('ConstructorioID', function () {
     });
 
     it('should read the session id from cookie if storage location is set to cookie', function () {
-      document.cookie = `ConstructorioID_session_id={"sessionId":42,"lastTime":${Date.now()}}; expires=Tue, 19 Jan 2038 03:14:07 GMT; path=/`;
+      const sessionId = 42;
+      const lastTime = Date.now();
+      document.cookie = `ConstructorioID_session_id=${sessionId}|${lastTime}; expires=Tue, 19 Jan 2038 03:14:07 GMT; path=/`;
       var session = new ConstructorioID({ session_id_storage_location: 'cookie' });
       expect(session.session_id).to.be.a('number');
-      expect(session.session_id).to.equal(42);
+      expect(session.session_id).to.equal(sessionId);
     });
 
     it('should set the session id to 1 if there is no cookie and storage location is set to cookie', function () {
@@ -147,10 +148,10 @@ describe('ConstructorioID', function () {
     });
 
     it('should set session_is_new to false if the session is not new', function () {
-      window.localStorage.setItem('_constructorio_search_session', JSON.stringify({
-        sessionId: 42,
-        lastTime: Date.now()
-      }));
+      const sessionId = 42;
+      const lastTime = Date.now();
+
+      window.localStorage.setItem('_constructorio_search_session', sessionId + '|' + lastTime);
       var session = new ConstructorioID();
       expect(session.session_id).to.equal(42);
       expect(session.session_is_new).to.be.a('boolean');
@@ -158,10 +159,9 @@ describe('ConstructorioID', function () {
     });
 
     it('should set session_is_new to true if the session is new', function () {
-      window.localStorage.setItem('_constructorio_search_session', JSON.stringify({
-        sessionId: 42,
-        lastTime: Date.now() - 1000 * 60 * 60 * 24 * 60
-      }));
+      const sessionId = 42;
+      const lastTime = Date.now() - 1000 * 60 * 60 * 24 * 60;
+      window.localStorage.setItem('_constructorio_search_session', sessionId + '|' + lastTime);
       var session = new ConstructorioID();
       expect(session.session_id).to.equal(43);
       expect(session.session_is_new).to.be.a('boolean');
@@ -169,7 +169,9 @@ describe('ConstructorioID', function () {
     });
 
     it('should set session_is_new to false if the session is not new and storage location is set to cookie', function () {
-      document.cookie = `ConstructorioID_session_id={"sessionId":42,"lastTime":${Date.now()}}; expires=Tue, 19 Jan 2038 03:14:07 GMT; path=/`;
+      const sessionId = 42;
+      const lastTime = Date.now();
+      document.cookie = `ConstructorioID_session_id=${sessionId}|${lastTime}; expires=Tue, 19 Jan 2038 03:14:07 GMT; path=/`;
       var session = new ConstructorioID({ session_id_storage_location: 'cookie' });
       expect(session.session_id).to.equal(42);
       expect(session.session_is_new).to.be.a('boolean');
@@ -177,7 +179,9 @@ describe('ConstructorioID', function () {
     });
 
     it('should set session_is_new to true if the session is new and storage location is set to cookie', function () {
-      document.cookie = `ConstructorioID_session_id={"sessionId":42,"lastTime":${Date.now() - 1000 * 60 * 60 * 24 * 60}}; expires=Tue, 19 Jan 2038 03:14:07 GMT; path=/`;
+      const sessionId = 42;
+      const lastTime = Date.now() - 1000 * 60 * 60 * 24 * 60;
+      document.cookie = `ConstructorioID_session_id=${sessionId}|${lastTime}; expires=Tue, 19 Jan 2038 03:14:07 GMT; path=/`;
       var session = new ConstructorioID({ session_id_storage_location: 'cookie' });
       expect(session.session_id).to.equal(43);
       expect(session.session_is_new).to.be.a('boolean');
