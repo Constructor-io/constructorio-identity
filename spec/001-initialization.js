@@ -11,8 +11,8 @@ describe('ConstructorioID', function () {
       'get_cookie',
       'delete_cookie',
       'generate_client_id',
-      'get_local_object',
-      'set_local_object',
+      'get_local_value',
+      'set_local_value',
       'generate_session_id'
     ];
     expect(actualKeys).to.eql(expectedKeys);
@@ -123,7 +123,7 @@ describe('ConstructorioID', function () {
       window.localStorage.setItem('_constructorio_search_session', sessionId + '|' + lastTime);
       var session = new ConstructorioID();
       expect(session.session_id).to.be.a('number');
-      expect(session.session_id).to.equal(42);
+      expect(session.session_id).to.equal(sessionId);
     });
 
     it('should read the session id from local storage data if data is being stored in legacy (JSON) format', function () {
@@ -182,7 +182,7 @@ describe('ConstructorioID', function () {
 
       window.localStorage.setItem('_constructorio_search_session', sessionId + '|' + lastTime);
       var session = new ConstructorioID();
-      expect(session.session_id).to.equal(42);
+      expect(session.session_id).to.equal(sessionId);
       expect(session.session_is_new).to.be.a('boolean');
       expect(session.session_is_new).to.equal(false);
     });
@@ -202,7 +202,7 @@ describe('ConstructorioID', function () {
       const lastTime = Date.now();
       document.cookie = `ConstructorioID_session_id=${sessionId}|${lastTime}; expires=Tue, 19 Jan 2038 03:14:07 GMT; path=/`;
       var session = new ConstructorioID({ session_id_storage_location: 'cookie' });
-      expect(session.session_id).to.equal(42);
+      expect(session.session_id).to.equal(sessionId);
       expect(session.session_is_new).to.be.a('boolean');
       expect(session.session_is_new).to.equal(false);
     });

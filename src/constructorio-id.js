@@ -30,7 +30,7 @@
         }
 
         if (this.client_id_storage_location === 'local') {
-          persisted_id = this.get_local_object(this.local_name_client_id);
+          persisted_id = this.get_local_value(this.local_name_client_id);
         }
 
         this.client_id = persisted_id ? persisted_id : this.generate_client_id();
@@ -100,13 +100,13 @@
     }
 
     if (this.client_id_storage_location === 'local') {
-      this.set_local_object(this.local_name_client_id, client_id);
+      this.set_local_value(this.local_name_client_id, client_id);
     }
 
     return client_id;
   };
 
-  ConstructorioID.prototype.get_local_object = function (key) {
+  ConstructorioID.prototype.get_local_value = function (key) {
     var data;
     var localStorage = window && window.localStorage;
 
@@ -121,7 +121,7 @@
     return data;
   };
 
-  ConstructorioID.prototype.set_local_object = function (key, data) {
+  ConstructorioID.prototype.set_local_value = function (key, data) {
     var localStorage = window && window.localStorage;
 
     if (localStorage && typeof key === 'string' && typeof data === 'string') {
@@ -142,7 +142,7 @@
     var sessionDataJSON;
 
     if (this.session_id_storage_location === 'local') {
-      sessionDataString = this.get_local_object(this.local_name_session_id);
+      sessionDataString = this.get_local_value(this.local_name_session_id);
     }
 
     if (this.session_id_storage_location === 'cookie') {
@@ -183,7 +183,7 @@
     this.session_is_new = sessionData && sessionData.sessionId === sessionId ? false : true;
 
     if (this.session_id_storage_location === 'local') {
-      this.set_local_object(this.local_name_session_id, sessionId + '|' + now);
+      this.set_local_value(this.local_name_session_id, sessionId + '|' + now);
     }
 
     if (this.session_id_storage_location === 'cookie') {
