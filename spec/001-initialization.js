@@ -126,6 +126,22 @@ describe('ConstructorioID', function () {
       expect(session.session_id).to.equal(42);
     });
 
+    it('should read the session id from local storage data if data is being stored in legacy (JSON) format', function () {
+      const sessionId = 42;
+      const lastTime = Date.now();
+      window.localStorage.setItem('_constructorio_search_session', JSON.stringify({
+        sessionId,
+        lastTime
+      }));
+      var session = new ConstructorioID();
+      expect(session.session_id).to.be.a('number');
+      expect(session.session_id).to.equal(sessionId);
+      var newSessionData = window.localStorage.getItem('_constructorio_search_session');
+      var newSessionDataSplit = newSessionData.split('|');
+      expect(parseInt(newSessionDataSplit[0], 10)).to.equal(sessionId);
+      expect(parseInt(newSessionDataSplit[1], 10)).to.be.at.least(lastTime);
+    });
+
     it('should set the session id to 1 if there is no local storage data', function () {
       var session = new ConstructorioID();
       expect(session.session_id).to.be.a('number');
@@ -139,6 +155,19 @@ describe('ConstructorioID', function () {
       var session = new ConstructorioID({ session_id_storage_location: 'cookie' });
       expect(session.session_id).to.be.a('number');
       expect(session.session_id).to.equal(sessionId);
+    });
+
+    it('should read the session id from cookie if storage location is set to cookie if data is being stored in legacy (JSON) format', function () {
+      const sessionId = 42;
+      const lastTime = Date.now();
+      document.cookie = `ConstructorioID_session_id=${JSON.stringify({ sessionId, lastTime })}; expires=Tue, 19 Jan 2038 03:14:07 GMT; path=/`;
+      var session = new ConstructorioID({ session_id_storage_location: 'cookie' });
+      expect(session.session_id).to.be.a('number');
+      expect(session.session_id).to.equal(sessionId);
+      var newSessionDataMatch = document.cookie.match(/ConstructorioID_session_id=(.*);/);
+      var newSessionDataSplit = newSessionDataMatch && newSessionDataMatch[1].split('|');
+      expect(parseInt(newSessionDataSplit[0], 10)).to.equal(sessionId);
+      expect(parseInt(newSessionDataSplit[1], 10)).to.be.at.least(lastTime);
     });
 
     it('should set the session id to 1 if there is no cookie and storage location is set to cookie', function () {

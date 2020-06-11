@@ -139,6 +139,7 @@
     var sessionDataString;
     var sessionDataSplit;
     var sessionData;
+    var sessionDataJSON;
 
     if (this.session_id_storage_location === 'local') {
       sessionDataString = this.get_local_object(this.local_name_session_id);
@@ -149,11 +150,23 @@
     }
 
     if (sessionDataString) {
-      sessionDataSplit = sessionDataString && sessionDataString.split('|');
-      sessionData = {
-        sessionId: parseInt(sessionDataSplit && sessionDataSplit[0], 10),
-        lastTime: parseInt(sessionDataSplit && sessionDataSplit[1], 10)
-      };
+      // Ensure backwards compatibility with legacy data structure (JSON)
+      try {
+        sessionDataJSON = JSON.parse(sessionDataString);
+      } catch (e) {
+        // fail silently
+      }
+
+      // Ensure backwards compatibility with legacy data structure (JSON)
+      if (sessionDataJSON) {
+        sessionData = sessionDataJSON;
+      } else {
+        sessionDataSplit = sessionDataString && sessionDataString.split('|');
+        sessionData = {
+          sessionId: parseInt(sessionDataSplit && sessionDataSplit[0], 10),
+          lastTime: parseInt(sessionDataSplit && sessionDataSplit[1], 10)
+        };
+      }
     }
 
     var sessionId = 1;
