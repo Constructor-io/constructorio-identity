@@ -133,7 +133,7 @@
         }
       }
 
-      if (typeof data === 'string') {
+      if (typeof data === 'string' || typeof data === 'number') {
         try {
           localStorage.setItem(key, data);
         } catch (e) {
