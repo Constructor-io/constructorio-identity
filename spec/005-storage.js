@@ -70,14 +70,14 @@ describe('ConstructorioID', function () {
     it('should return the same session id from cookie if recent and the storage location is set to cookie', function () {
       var now = Date.now();
       var session = new ConstructorioID({ session_id_storage_location: 'cookie' });
-      document.cookie = `ConstructorioID_session_id={"sessionId":42,"lastTime":${now}}; expires=Tue, 19 Jan 2038 03:14:07 GMT; path=/`;
+      document.cookie = `ConstructorioID_session={"sessionId":42,"lastTime":${now}}; expires=Tue, 19 Jan 2038 03:14:07 GMT; path=/`;
 
       var set_cookie = sinon.spy(ConstructorioID.prototype, 'set_cookie');
       var session_id = session.generate_session_id();
       expect(session_id).to.be.a('number');
       expect(session_id).to.equal(42);
       expect(set_cookie.calledOnce).to.be.true;
-      expect(set_cookie.calledWith('ConstructorioID_session_id')).to.be.true;
+      expect(set_cookie.calledWith('ConstructorioID_session')).to.be.true;
       expect(JSON.parse(set_cookie.getCall(0).args[1]).sessionId).to.equal(42);
       expect(JSON.parse(set_cookie.getCall(0).args[1]).lastTime).to.be.at.least(now);
 
@@ -108,14 +108,14 @@ describe('ConstructorioID', function () {
     it('should increment session id from cookie if older than thirty minutes and storage location is set to cookie', function () {
       var now = Date.now();
       var session = new ConstructorioID({ session_id_storage_location: 'cookie' });
-      document.cookie = `ConstructorioID_session_id={"sessionId":42,"lastTime":${Date.now() - 1000 * 60 * 30}}; expires=Tue, 19 Jan 2038 03:14:07 GMT; path=/`;
+      document.cookie = `ConstructorioID_session={"sessionId":42,"lastTime":${Date.now() - 1000 * 60 * 30}}; expires=Tue, 19 Jan 2038 03:14:07 GMT; path=/`;
 
       var set_cookie = sinon.spy(ConstructorioID.prototype, 'set_cookie');
       var session_id = session.generate_session_id();
       expect(session_id).to.be.a('number');
       expect(session_id).to.equal(43);
       expect(set_cookie.calledOnce).to.be.true;
-      expect(set_cookie.calledWith('ConstructorioID_session_id')).to.be.true;
+      expect(set_cookie.calledWith('ConstructorioID_session')).to.be.true;
       expect(JSON.parse(set_cookie.getCall(0).args[1]).sessionId).to.equal(43);
       expect(JSON.parse(set_cookie.getCall(0).args[1]).lastTime).to.be.at.least(now);
 
@@ -148,7 +148,7 @@ describe('ConstructorioID', function () {
       expect(session_id).to.be.a('number');
       expect(session_id).to.equal(1);
       expect(set_cookie.calledOnce).to.be.true;
-      expect(set_cookie.calledWith('ConstructorioID_session_id')).to.be.true;
+      expect(set_cookie.calledWith('ConstructorioID_session')).to.be.true;
       expect(JSON.parse(set_cookie.getCall(0).args[1]).sessionId).to.equal(1);
       expect(JSON.parse(set_cookie.getCall(0).args[1]).lastTime).to.be.at.least(now);
       set_cookie.restore();
