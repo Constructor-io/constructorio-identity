@@ -7,12 +7,14 @@
     var defaults = {
       user_agent: null,
       persist: true,
-      client_id_cookie_name: 'ConstructorioID_client_id',
-      session_id_cookie_name: 'ConstructorioID_session_id',
+      cookie_name_client_id: 'ConstructorioID_client_id',
+      cookie_name_session_id: 'ConstructorioID_session_id',
+      cookie_name_session_data: 'ConstructorioID_session',
       cookie_domain: null,
       cookie_days_to_live: 365,
-      local_name_client_id: '_constructorio_search_client',
-      local_name_session_id: '_constructorio_search_session',
+      local_name_client_id: '_constructorio_search_client_id',
+      local_name_session_id: '_constructorio_search_session_id',
+      local_name_session_data: '_constructorio_search_session',
       on_node: typeof window === 'undefined',
       session_is_new: null,
       client_id_storage_location: 'cookie',
@@ -26,7 +28,7 @@
         var persisted_id;
 
         if (this.client_id_storage_location === 'cookie') {
-          persisted_id = this.get_cookie(this.client_id_cookie_name);
+          persisted_id = this.get_cookie(this.cookie_name_client_id);
         }
 
         if (this.client_id_storage_location === 'local') {
@@ -96,7 +98,7 @@
     });
 
     if (this.client_id_storage_location === 'cookie') {
-      this.set_cookie(this.client_id_cookie_name, client_id);
+      this.set_cookie(this.cookie_name_client_id, client_id);
     }
 
     if (this.client_id_storage_location === 'local') {
@@ -131,7 +133,7 @@
         }
       }
 
-      if (typeof data === 'string') {
+      if (typeof data === 'string' || typeof data === 'number') {
         try {
           localStorage.setItem(key, data);
         } catch (e) {
@@ -147,11 +149,11 @@
     var sessionData;
 
     if (this.session_id_storage_location === 'local') {
-      sessionData = this.get_local_object(this.local_name_session_id);
+      sessionData = this.get_local_object(this.local_name_session_data);
     }
 
     if (this.session_id_storage_location === 'cookie') {
-      sessionData = this.get_cookie(this.session_id_cookie_name);
+      sessionData = this.get_cookie(this.cookie_name_session_data);
 
       try {
         sessionData = JSON.parse(sessionData);
@@ -174,14 +176,16 @@
     this.session_is_new = sessionData && sessionData.sessionId === sessionId ? false : true;
 
     if (this.session_id_storage_location === 'local') {
-      this.set_local_object(this.local_name_session_id, {
+      this.set_local_object(this.local_name_session_id, sessionId);
+      this.set_local_object(this.local_name_session_data, {
         sessionId: sessionId,
         lastTime: now
       });
     }
 
     if (this.session_id_storage_location === 'cookie') {
-      this.set_cookie(this.session_id_cookie_name, JSON.stringify({
+      this.set_cookie(this.cookie_name_session_id, sessionId);
+      this.set_cookie(this.cookie_name_session_data, JSON.stringify({
         sessionId: sessionId,
         lastTime: now
       }));
