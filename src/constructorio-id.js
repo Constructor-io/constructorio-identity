@@ -176,6 +176,7 @@
     this.session_is_new = sessionData && sessionData.sessionId === sessionId ? false : true;
 
     if (this.session_id_storage_location === 'local') {
+      this.set_local_object(this.local_name_session_id, sessionId);
       this.set_local_object(this.local_name_session_data, {
         sessionId: sessionId,
         lastTime: now
@@ -183,6 +184,7 @@
     }
 
     if (this.session_id_storage_location === 'cookie') {
+      this.set_cookie(this.cookie_name_session_id, sessionId);
       this.set_cookie(this.cookie_name_session_data, JSON.stringify({
         sessionId: sessionId,
         lastTime: now

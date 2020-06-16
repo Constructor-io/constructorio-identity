@@ -59,10 +59,12 @@ describe('ConstructorioID', function () {
       var session_id = session.generate_session_id();
       expect(session_id).to.be.a('number');
       expect(session_id).to.equal(42);
-      expect(set_local_object.calledOnce).to.be.true;
+      expect(set_local_object.calledTwice).to.be.true;
+      expect(set_local_object.calledWith('_constructorio_search_session_id')).to.be.true;
       expect(set_local_object.calledWith('_constructorio_search_session')).to.be.true;
-      expect(set_local_object.getCall(0).args[1].sessionId).to.equal(42);
-      expect(set_local_object.getCall(0).args[1].lastTime).to.be.at.least(now);
+      expect(set_local_object.getCall(0).args[1]).to.equal(42);
+      expect(set_local_object.getCall(1).args[1].sessionId).to.equal(42);
+      expect(set_local_object.getCall(1).args[1].lastTime).to.be.at.least(now);
 
       set_local_object.restore();
     });
@@ -76,10 +78,12 @@ describe('ConstructorioID', function () {
       var session_id = session.generate_session_id();
       expect(session_id).to.be.a('number');
       expect(session_id).to.equal(42);
-      expect(set_cookie.calledOnce).to.be.true;
+      expect(set_cookie.calledTwice).to.be.true;
+      expect(set_cookie.calledWith('ConstructorioID_session_id')).to.be.true;
       expect(set_cookie.calledWith('ConstructorioID_session')).to.be.true;
-      expect(JSON.parse(set_cookie.getCall(0).args[1]).sessionId).to.equal(42);
-      expect(JSON.parse(set_cookie.getCall(0).args[1]).lastTime).to.be.at.least(now);
+      expect(JSON.parse(set_cookie.getCall(0).args[1])).to.equal(42);
+      expect(JSON.parse(set_cookie.getCall(1).args[1]).sessionId).to.equal(42);
+      expect(JSON.parse(set_cookie.getCall(1).args[1]).lastTime).to.be.at.least(now);
 
       set_cookie.restore();
     });
@@ -97,10 +101,12 @@ describe('ConstructorioID', function () {
       var session_id = session.generate_session_id();
       expect(session_id).to.be.a('number');
       expect(session_id).to.equal(43);
-      expect(set_local_object.calledOnce).to.be.true;
+      expect(set_local_object.calledTwice).to.be.true;
+      expect(set_local_object.calledWith('_constructorio_search_session_id')).to.be.true;
       expect(set_local_object.calledWith('_constructorio_search_session')).to.be.true;
-      expect(set_local_object.getCall(0).args[1].sessionId).to.equal(43);
-      expect(set_local_object.getCall(0).args[1].lastTime).to.be.at.least(now);
+      expect(set_local_object.getCall(0).args[1]).to.equal(43);
+      expect(set_local_object.getCall(1).args[1].sessionId).to.equal(43);
+      expect(set_local_object.getCall(1).args[1].lastTime).to.be.at.least(now);
 
       set_local_object.restore();
     });
@@ -114,10 +120,12 @@ describe('ConstructorioID', function () {
       var session_id = session.generate_session_id();
       expect(session_id).to.be.a('number');
       expect(session_id).to.equal(43);
-      expect(set_cookie.calledOnce).to.be.true;
+      expect(set_cookie.calledTwice).to.be.true;
+      expect(set_cookie.calledWith('ConstructorioID_session_id')).to.be.true;
       expect(set_cookie.calledWith('ConstructorioID_session')).to.be.true;
-      expect(JSON.parse(set_cookie.getCall(0).args[1]).sessionId).to.equal(43);
-      expect(JSON.parse(set_cookie.getCall(0).args[1]).lastTime).to.be.at.least(now);
+      expect(JSON.parse(set_cookie.getCall(0).args[1])).to.equal(43);
+      expect(JSON.parse(set_cookie.getCall(1).args[1]).sessionId).to.equal(43);
+      expect(JSON.parse(set_cookie.getCall(1).args[1]).lastTime).to.be.at.least(now);
 
       set_cookie.restore();
     });
@@ -131,10 +139,12 @@ describe('ConstructorioID', function () {
       var session_id = session.generate_session_id();
       expect(session_id).to.be.a('number');
       expect(session_id).to.equal(1);
-      expect(set_local_object.calledOnce).to.be.true;
+      expect(set_local_object.calledTwice).to.be.true;
+      expect(set_local_object.calledWith('_constructorio_search_session_id')).to.be.true;
       expect(set_local_object.calledWith('_constructorio_search_session')).to.be.true;
-      expect(set_local_object.getCall(0).args[1].sessionId).to.equal(1);
-      expect(set_local_object.getCall(0).args[1].lastTime).to.be.at.least(now);
+      expect(set_local_object.getCall(0).args[1]).to.equal(1);
+      expect(set_local_object.getCall(1).args[1].sessionId).to.equal(1);
+      expect(set_local_object.getCall(1).args[1].lastTime).to.be.at.least(now);
       set_local_object.restore();
     });
 
@@ -147,10 +157,12 @@ describe('ConstructorioID', function () {
       var session_id = session.generate_session_id();
       expect(session_id).to.be.a('number');
       expect(session_id).to.equal(1);
-      expect(set_cookie.calledOnce).to.be.true;
+      expect(set_cookie.calledTwice).to.be.true;
+      expect(set_cookie.calledWith('ConstructorioID_session_id')).to.be.true;
       expect(set_cookie.calledWith('ConstructorioID_session')).to.be.true;
-      expect(JSON.parse(set_cookie.getCall(0).args[1]).sessionId).to.equal(1);
-      expect(JSON.parse(set_cookie.getCall(0).args[1]).lastTime).to.be.at.least(now);
+      expect(JSON.parse(set_cookie.getCall(0).args[1])).to.equal(1);
+      expect(JSON.parse(set_cookie.getCall(1).args[1]).sessionId).to.equal(1);
+      expect(JSON.parse(set_cookie.getCall(1).args[1]).lastTime).to.be.at.least(now);
       set_cookie.restore();
     });
   });
