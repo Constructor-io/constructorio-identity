@@ -166,12 +166,12 @@
     var sessionDataId = 1;
 
     if (sessionData && typeof sessionData === 'object') {
-      sessionDataId = parseInt(sessionData.sessionId, 10);
+      sessionDataId = parseInt(sessionData.sessionId, 10) || 1;
 
       if (sessionData.lastTime > now - thirtyMinutes) {
-        sessionId = sessionDataId ? sessionDataId : 1;
+        sessionId = sessionDataId;
       } else {
-        sessionId = sessionDataId ? sessionDataId + 1 : 1;
+        sessionId = sessionDataId + 1;
       }
     }
 
