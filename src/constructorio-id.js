@@ -163,17 +163,20 @@
     }
 
     var sessionId = 1;
+    var sessionDataId = 1;
 
-    if (sessionData) {
+    if (sessionData && typeof sessionData === 'object') {
+      sessionDataId = parseInt(sessionData.sessionId, 10);
+
       if (sessionData.lastTime > now - thirtyMinutes) {
-        sessionId = parseInt(sessionData.sessionId, 10);
+        sessionId = sessionDataId || 1;
       } else {
-        sessionId = parseInt(sessionData.sessionId, 10) + 1;
+        sessionId = (sessionDataId || 1) + 1;
       }
     }
 
     this.session_id = sessionId;
-    this.session_is_new = sessionData && sessionData.sessionId === sessionId ? false : true;
+    this.session_is_new = sessionData && sessionDataId === sessionId ? false : true;
 
     if (this.session_id_storage_location === 'local') {
       this.set_local_object(this.local_name_session_id, sessionId);
