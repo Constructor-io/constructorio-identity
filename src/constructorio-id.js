@@ -166,9 +166,9 @@
 
     if (sessionData) {
       if (sessionData.lastTime > now - thirtyMinutes) {
-        sessionId = sessionData.sessionId;
+        sessionId = parseInt(sessionData.sessionId, 10);
       } else {
-        sessionId = sessionData.sessionId + 1;
+        sessionId = parseInt(sessionData.sessionId, 10) + 1;
       }
     }
 
