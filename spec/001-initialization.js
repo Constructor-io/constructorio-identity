@@ -133,6 +133,56 @@ describe('ConstructorioID', function () {
       expect(session.session_id).to.equal(1);
     });
 
+    it('should set the session id if local storage data can be parsed into a number', function () {
+      window.localStorage.setItem('_constructorio_search_session', JSON.stringify({
+        sessionId: '42',
+        lastTime: Date.now()
+      }));
+      var session = new ConstructorioID();
+      expect(session.session_id).to.be.a('number');
+      expect(session.session_id).to.equal(42);
+    });
+
+    it('should set the session id if local storage data can be parsed into a number (extra comma)', function () {
+      window.localStorage.setItem('_constructorio_search_session', JSON.stringify({
+        sessionId: '44,',
+        lastTime: Date.now()
+      }));
+      var session = new ConstructorioID();
+      expect(session.session_id).to.be.a('number');
+      expect(session.session_id).to.equal(44);
+    });
+
+    it('should set the session id to 1 if local storage data cannot be parsed into a number (NaN)', function () {
+      window.localStorage.setItem('_constructorio_search_session', JSON.stringify({
+        sessionId: NaN,
+        lastTime: Date.now()
+      }));
+      var session = new ConstructorioID();
+      expect(session.session_id).to.be.a('number');
+      expect(session.session_id).to.equal(1);
+    });
+
+    it('should set the session id to 1 if local storage data cannot be parsed into a number (null)', function () {
+      window.localStorage.setItem('_constructorio_search_session', JSON.stringify({
+        sessionId: null,
+        lastTime: Date.now()
+      }));
+      var session = new ConstructorioID();
+      expect(session.session_id).to.be.a('number');
+      expect(session.session_id).to.equal(1);
+    });
+
+    it('should set the session id to 1 if local storage data cannot be parsed into a number', function () {
+      window.localStorage.setItem('_constructorio_search_session', JSON.stringify({
+        sessionId: ',,,11',
+        lastTime: Date.now()
+      }));
+      var session = new ConstructorioID();
+      expect(session.session_id).to.be.a('number');
+      expect(session.session_id).to.equal(1);
+    });
+
     it('should read the session id from cookie if storage location is set to cookie', function () {
       document.cookie = `ConstructorioID_session={"sessionId":42,"lastTime":${Date.now()}}; expires=Tue, 19 Jan 2038 03:14:07 GMT; path=/`;
       var session = new ConstructorioID({ session_id_storage_location: 'cookie' });
@@ -141,6 +191,41 @@ describe('ConstructorioID', function () {
     });
 
     it('should set the session id to 1 if there is no cookie and storage location is set to cookie', function () {
+      var session = new ConstructorioID({ session_id_storage_location: 'cookie' });
+      expect(session.session_id).to.be.a('number');
+      expect(session.session_id).to.equal(1);
+    });
+
+    it('should set the session id if cookie data can be parsed into a number', function () {
+      document.cookie = `ConstructorioID_session={"sessionId":"42","lastTime":${Date.now()}}; expires=Tue, 19 Jan 2038 03:14:07 GMT; path=/`;
+      var session = new ConstructorioID({ session_id_storage_location: 'cookie' });
+      expect(session.session_id).to.be.a('number');
+      expect(session.session_id).to.equal(42);
+    });
+
+    it('should set the session id if cookie data can be parsed into a number (extra comma)', function () {
+      document.cookie = `ConstructorioID_session={"sessionId":"44,","lastTime":${Date.now()}}; expires=Tue, 19 Jan 2038 03:14:07 GMT; path=/`;
+      var session = new ConstructorioID({ session_id_storage_location: 'cookie' });
+      expect(session.session_id).to.be.a('number');
+      expect(session.session_id).to.equal(44);
+    });
+
+    it('should set the session id to 1 if cookie data cannot be parsed into a number (NaN)', function () {
+      document.cookie = `ConstructorioID_session={"sessionId":NaN,"lastTime":${Date.now()}}; expires=Tue, 19 Jan 2038 03:14:07 GMT; path=/`;
+      var session = new ConstructorioID({ session_id_storage_location: 'cookie' });
+      expect(session.session_id).to.be.a('number');
+      expect(session.session_id).to.equal(1);
+    });
+
+    it('should set the session id to 1 if cookie data cannot be parsed into a number (null)', function () {
+      document.cookie = `ConstructorioID_session={"sessionId":null,"lastTime":${Date.now()}}; expires=Tue, 19 Jan 2038 03:14:07 GMT; path=/`;
+      var session = new ConstructorioID({ session_id_storage_location: 'cookie' });
+      expect(session.session_id).to.be.a('number');
+      expect(session.session_id).to.equal(1);
+    });
+
+    it('should set the session id to 1 if cookie data cannot be parsed into a number', function () {
+      document.cookie = `ConstructorioID_session={"sessionId":",,,,1","lastTime":${Date.now()}}; expires=Tue, 19 Jan 2038 03:14:07 GMT; path=/`;
       var session = new ConstructorioID({ session_id_storage_location: 'cookie' });
       expect(session.session_id).to.be.a('number');
       expect(session.session_id).to.equal(1);
