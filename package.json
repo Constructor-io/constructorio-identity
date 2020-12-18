@@ -16,7 +16,7 @@
     "format": "eslint --fix ",
     "lint": "eslint spec/*.js src/*.js",
     "coverage": "nyc --reporter=html mocha spec/",
-    "postcoverage": "http-server coverage",
+    "postcoverage": "serve --listen 8080 coverage",
     "test": "mocha spec/"
   },
   "pre-push": [
@@ -28,11 +28,11 @@
     "eslint": "^6.4.0",
     "eslint-config-airbnb-base": "^14.0.0",
     "eslint-plugin-import": "^2.18.2",
-    "http-server": "^0.12.3",
     "jsdom": "^15.1.1",
     "mocha": "^6.2.0",
     "nyc": "^14.1.1",
     "pre-push": "^0.1.1",
+    "serve": "^11.3.2",
     "sinon": "^7.4.2"
   },
   "dependencies": {}
