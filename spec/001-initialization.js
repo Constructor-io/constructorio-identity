@@ -114,7 +114,7 @@ describe('ConstructorioID', function () {
       });
 
       it('should read the client id from cookies if it does not exist in local storage and remove it from the cookies', function () {
-        document.cookie = `ConstructorioID_client_id=chummyid; expires=Tue, 19 Jan 2038 03:14:07 GMT; path=/`;
+        document.cookie = 'ConstructorioID_client_id=chummyid; expires=Tue, 19 Jan 2038 03:14:07 GMT; path=/';
         var session = new ConstructorioID({ client_id_storage_location: 'local' });
         var cookieData = JSON.parse(helper.getCookie('ConstructorioID_client_id'));
         expect(session.client_id).to.equal('chummyid');

@@ -18,12 +18,12 @@ function getStorageMock() {
  * Returns a value given the cookie name
  */
 function getCookie(name) {
-  var re = new RegExp(name + "=([^;]+)");
+  var re = new RegExp(name + '=([^;]+)');
   var value = re.exec(document.cookie);
-  return (value != null) ? unescape(value[1]) : null;
+  return (value !== null) ? unescape(value[1]) : null;
 }
 
 module.exports = {
   getStorageMock: getStorageMock,
-  getCookie: getCookie,
+  getCookie: getCookie
 };
