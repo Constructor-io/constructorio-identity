@@ -101,6 +101,7 @@
         if (local_persisted_client_id) {
           client_id = local_persisted_client_id;
           this.set_cookie(this.cookie_name_client_id, client_id);
+          this.delete_local_object(this.local_name_client_id);
         }
       }
       
@@ -108,6 +109,7 @@
         if (cookie_persisted_client_id) {
           client_id = cookie_persisted_client_id;
           this.set_local_object(this.local_name_client_id, client_id);
+          this.delete_cookie(this.cookie_name_client_id);
         }
       }
     }
@@ -166,6 +168,18 @@
     }
   };
 
+  ConstructorioID.prototype.delete_local_object = function (key) {
+    var localStorage = window && window.localStorage;
+
+    if (localStorage && typeof key === 'string') {
+      try {
+        localStorage.removeItem(key);
+      } catch (e) {
+        // fail silently
+      }
+    }
+  }
+
   ConstructorioID.prototype.generate_session_id = function () {
     var cookie_persisted_session_data = this.get_cookie(this.cookie_name_session_data);
     var local_persisted_session_data = this.get_local_object(this.local_name_session_data);
@@ -178,6 +192,8 @@
 
       if (!sessionData && cookie_persisted_session_data) {
         sessionData = cookie_persisted_session_data;
+
+        this.delete_cookie(this.cookie_name_session_data);
       }
     }
 
@@ -192,6 +208,8 @@
 
       if (!sessionData && local_persisted_session_data) {
         sessionData = local_persisted_session_data;
+
+        this.delete_local_object(this.local_name_session_data);
       }
     }
 
