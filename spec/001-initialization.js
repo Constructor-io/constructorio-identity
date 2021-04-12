@@ -98,7 +98,7 @@ describe('ConstructorioID', function () {
       expect(session.client_id).to.match(/(\w|d|-){36}/);
     });
 
-    describe('When the storage location is set to local', function () {
+    describe('when the storage location is set to local', function () {
       it('should read the client id from local storage', function () {
         window.localStorage.setItem('dummyname', 'dummyid');
         var session = new ConstructorioID({ local_name_client_id: 'dummyname', client_id_storage_location: 'local' } );
@@ -196,7 +196,7 @@ describe('ConstructorioID', function () {
       expect(session.session_id).to.equal(1);
     });
 
-    describe('When the storage location is set to cookie', function () {
+    describe('when the storage location is set to cookie', function () {
       it('should read the session id from cookie', function () {
         document.cookie = `ConstructorioID_session={"sessionId":42,"lastTime":${Date.now()}}; expires=Tue, 19 Jan 2038 03:14:07 GMT; path=/`;
         var session = new ConstructorioID({ session_id_storage_location: 'cookie' });
