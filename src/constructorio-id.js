@@ -91,18 +91,43 @@
   };
 
   ConstructorioID.prototype.generate_client_id = function () {
-    var client_id = 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function (c) {
-      var r = Math.random() * 16 | 0;
-      var v = c === 'x' ? r : (r & 0x3 | 0x8);
-      return v.toString(16);
-    });
+    var client_id;
 
-    if (this.client_id_storage_location === 'cookie') {
-      this.set_cookie(this.cookie_name_client_id, client_id);
+    if (!this.on_node) {
+      var cookie_persisted_client_id = this.get_cookie(this.cookie_name_client_id);
+      var local_persisted_client_id = this.get_local_object(this.local_name_client_id);
+
+      if (this.client_id_storage_location === 'cookie') {
+        if (local_persisted_client_id) {
+          client_id = local_persisted_client_id;
+          this.set_cookie(this.cookie_name_client_id, client_id);
+          this.delete_local_object(this.local_name_client_id);
+        }
+      }
+
+      if (this.client_id_storage_location === 'local') {
+        if (cookie_persisted_client_id) {
+          client_id = cookie_persisted_client_id;
+          this.set_local_object(this.local_name_client_id, client_id);
+          this.delete_cookie(this.cookie_name_client_id);
+        }
+      }
     }
 
-    if (this.client_id_storage_location === 'local') {
-      this.set_local_object(this.local_name_client_id, client_id);
+    if (!client_id) {
+      client_id = 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function (c) {
+        var r = Math.random() * 16 | 0;
+        var v = c === 'x' ? r : (r & 0x3 | 0x8);
+        return v.toString(16);
+      });
+
+      if (this.client_id_storage_location === 'cookie') {
+        this.set_cookie(this.cookie_name_client_id, client_id);
+      }
+
+      if (this.client_id_storage_location === 'local') {
+        this.set_local_object(this.local_name_client_id, client_id);
+      }
     }
 
     return client_id;
@@ -143,13 +168,33 @@
     }
   };
 
+  ConstructorioID.prototype.delete_local_object = function (key) {
+    var localStorage = window && window.localStorage;
+
+    if (localStorage && typeof key === 'string') {
+      try {
+        localStorage.removeItem(key);
+      } catch (e) {
+        // fail silently
+      }
+    }
+  };
+
   ConstructorioID.prototype.generate_session_id = function () {
+    var cookie_persisted_session_data = this.get_cookie(this.cookie_name_session_data);
+    var local_persisted_session_data = this.get_local_object(this.local_name_session_data);
     var now = Date.now();
     var thirtyMinutes = 1000 * 60 * 30;
     var sessionData;
 
     if (this.session_id_storage_location === 'local') {
       sessionData = this.get_local_object(this.local_name_session_data);
+
+      if (!sessionData && cookie_persisted_session_data) {
+        sessionData = cookie_persisted_session_data;
+
+        this.delete_cookie(this.cookie_name_session_data);
+      }
     }
 
     if (this.session_id_storage_location === 'cookie') {
@@ -159,6 +204,12 @@
         sessionData = JSON.parse(sessionData);
       } catch (e) {
         // fail silently
+      }
+
+      if (!sessionData && local_persisted_session_data) {
+        sessionData = local_persisted_session_data;
+
+        this.delete_local_object(this.local_name_session_data);
       }
     }
 

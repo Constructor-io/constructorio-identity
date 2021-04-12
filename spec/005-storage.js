@@ -130,6 +130,45 @@ describe('ConstructorioID', function () {
       set_cookie.restore();
     });
 
+    describe('when the storage location is set to cookie', function () {
+      it('should use session id from local storage if there is no cookie and increment if older than thirty minutes', function () {
+        var now = Date.now();
+        window.localStorage.setItem('_constructorio_search_session', JSON.stringify({ sessionId: 42, lastTime: `${now - 1000 * 60 * 30}` }));
+        var session = new ConstructorioID({ session_id_storage_location: 'cookie' });
+
+        var set_cookie = sinon.spy(ConstructorioID.prototype, 'set_cookie');
+        var session_id = session.generate_session_id();
+        expect(session_id).to.be.a('number');
+        expect(session_id).to.equal(43);
+        expect(set_cookie.calledTwice).to.be.true;
+        expect(set_cookie.calledWith('ConstructorioID_session_id')).to.be.true;
+        expect(set_cookie.calledWith('ConstructorioID_session')).to.be.true;
+        expect(JSON.parse(set_cookie.getCall(0).args[1])).to.equal(43);
+        expect(JSON.parse(set_cookie.getCall(1).args[1]).sessionId).to.equal(43);
+        expect(JSON.parse(set_cookie.getCall(1).args[1]).lastTime).to.be.at.least(now);
+
+        set_cookie.restore();
+      });
+
+      it('should set a session id in cookie if missing from both local storage and cookie', function () {
+        var now = Date.now();
+        var session = new ConstructorioID({ session_id_storage_location: 'cookie' });
+        document.cookie = '';
+
+        var set_cookie = sinon.spy(ConstructorioID.prototype, 'set_cookie');
+        var session_id = session.generate_session_id();
+        expect(session_id).to.be.a('number');
+        expect(session_id).to.equal(1);
+        expect(set_cookie.calledTwice).to.be.true;
+        expect(set_cookie.calledWith('ConstructorioID_session_id')).to.be.true;
+        expect(set_cookie.calledWith('ConstructorioID_session')).to.be.true;
+        expect(JSON.parse(set_cookie.getCall(0).args[1])).to.equal(1);
+        expect(JSON.parse(set_cookie.getCall(1).args[1]).sessionId).to.equal(1);
+        expect(JSON.parse(set_cookie.getCall(1).args[1]).lastTime).to.be.at.least(now);
+        set_cookie.restore();
+      });
+    });
+
     it('should set a session id in local storage if missing', function () {
       var now = Date.now();
       var session = new ConstructorioID();
@@ -146,24 +185,6 @@ describe('ConstructorioID', function () {
       expect(set_local_object.getCall(1).args[1].sessionId).to.equal(1);
       expect(set_local_object.getCall(1).args[1].lastTime).to.be.at.least(now);
       set_local_object.restore();
-    });
-
-    it('should set a session id in cookie if missing and storage location is set to cookie', function () {
-      var now = Date.now();
-      var session = new ConstructorioID({ session_id_storage_location: 'cookie' });
-      document.cookie = '';
-
-      var set_cookie = sinon.spy(ConstructorioID.prototype, 'set_cookie');
-      var session_id = session.generate_session_id();
-      expect(session_id).to.be.a('number');
-      expect(session_id).to.equal(1);
-      expect(set_cookie.calledTwice).to.be.true;
-      expect(set_cookie.calledWith('ConstructorioID_session_id')).to.be.true;
-      expect(set_cookie.calledWith('ConstructorioID_session')).to.be.true;
-      expect(JSON.parse(set_cookie.getCall(0).args[1])).to.equal(1);
-      expect(JSON.parse(set_cookie.getCall(1).args[1]).sessionId).to.equal(1);
-      expect(JSON.parse(set_cookie.getCall(1).args[1]).lastTime).to.be.at.least(now);
-      set_cookie.restore();
     });
   });
 });
