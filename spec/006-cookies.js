@@ -37,6 +37,16 @@ describe('ConstructorioID', function () {
       var value = session.get_cookie('melikecookie');
       expect(value).to.be.undefined;
     });
+
+    it('should handle unencoded cookies gracefully', function () {
+      document.cookie = 'melikecookie=omnomnom;'
+      document.cookie = 'badly=encoded%cookie'
+
+      var session = new ConstructorioID();
+      var value = session.get_cookie('melikecookie');
+
+      expect(value).to.match(/^omnomnom$/);
+    });
   });
 
   describe('delete_cookie', function () {
