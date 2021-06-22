@@ -39,8 +39,8 @@ describe('ConstructorioID', function () {
     });
 
     it('should handle unencoded cookies gracefully', function () {
-      document.cookie = 'melikecookie=omnomnom;'
-      document.cookie = 'badly=encoded%cookie'
+      document.cookie = 'melikecookie=omnomnom';
+      document.cookie = 'badly=encoded%cookie';
 
       var session = new ConstructorioID();
       var value = session.get_cookie('melikecookie');
