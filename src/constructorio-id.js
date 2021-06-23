@@ -82,6 +82,7 @@
         while (decodedCookie.charAt(0) === ' ') { // remove leading spaces
           decodedCookie = decodedCookie.substring(1);
         }
+
         if (decodedCookie.indexOf(cookieName) === 0) {
           return decodedCookie.substring(cookieName.length, decodedCookie.length);
         }
