@@ -72,17 +72,25 @@
 
   ConstructorioID.prototype.get_cookie = function (name) {
     var cookieName = name + '=';
-    var decodedCookie = decodeURIComponent(document.cookie);
-    var cookieBits = decodedCookie.split(';');
+    var cookieBits = document.cookie.split(';');
     for (var i = 0; i < cookieBits.length; i++) {
       var thisCookie = cookieBits[i];
-      while (thisCookie.charAt(0) === ' ') { // remove leading spaces
-        thisCookie = thisCookie.substring(1);
-      }
-      if (thisCookie.indexOf(cookieName) === 0) {
-        return thisCookie.substring(cookieName.length, thisCookie.length);
+
+      try {
+        var decodedCookie = decodeURIComponent(thisCookie);
+
+        while (decodedCookie.charAt(0) === ' ') { // remove leading spaces
+          decodedCookie = decodedCookie.substring(1);
+        }
+
+        if (decodedCookie.indexOf(cookieName) === 0) {
+          return decodedCookie.substring(cookieName.length, decodedCookie.length);
+        }
+      } catch (e) {
+        // do nothing
       }
     }
+
     return undefined; // eslint-disable-line
   };
 
