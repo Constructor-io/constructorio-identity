@@ -35,5 +35,7 @@
     "serve": "^11.3.2",
     "sinon": "^7.4.2"
   },
-  "dependencies": {}
+  "dependencies": {
+    "parse-domain": "^4.1.0"
+  }
 }

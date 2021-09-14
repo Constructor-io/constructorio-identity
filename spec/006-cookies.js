@@ -22,6 +22,30 @@ describe('ConstructorioID', function () {
       var cookieData =  session.set_cookie('mewantcookie', 'meeatcookie');
       expect(cookieData).to.match(/mewantcookie=meeatcookie; expires=.*; path=\//);
     });
+
+    it('should create a cookie using the root domain if there are one or more top level domains', function () {
+      var dom = new jsdom.JSDOM('', {
+        url: 'https://www.constructor.co.uk'
+      });
+      global.window = dom.window;
+      global.document = dom.window.document;
+
+      var session = new ConstructorioID();
+      var cookieData =  session.set_cookie('mewantcookie', 'meeatcookie');
+      expect(cookieData).to.match(/mewantcookie=meeatcookie; expires=.*; path=\/; domain=constructor.co.uk/);
+    });
+
+    it('should create a cookie using the root domain if there are one or more subdomains', function () {
+      var dom = new jsdom.JSDOM('', {
+        url: 'https://subdomain1.subdomain2.constructor.com.au'
+      });
+      global.window = dom.window;
+      global.document = dom.window.document;
+
+      var session = new ConstructorioID();
+      var cookieData =  session.set_cookie('mewantcookie', 'meeatcookie');
+      expect(cookieData).to.match(/mewantcookie=meeatcookie; expires=.*; path=\/; domain=constructor.com.au/);
+    });
   });
 
   describe('get_cookie', function () {

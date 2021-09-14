@@ -1,3 +1,5 @@
+var pd = require('parse-domain');
+
 (function () {
   // Object.assign polyfill
   // - https://developer.mozilla.org/en/docs/Web/JavaScript/Reference/Global_Objects/Object/assign#Polyfill
@@ -60,6 +62,13 @@
       var cookie_data = name + '=' + value + '; expires=' + expires.toUTCString() + '; path=/';
       if (this.cookie_domain) {
         cookie_data += '; domain=' + this.cookie_domain;
+      } else if (window && window.location && window.location.hostname) {
+        var parsedResult = pd.parseDomain(window.location.hostname);
+
+        if (parsedResult.type === pd.ParseResultType.Listed) {
+          var domain = parsedResult.domain + '.' + parsedResult.topLevelDomains.join('.');
+          cookie_data += '; domain=' + domain;
+        }
       }
       document.cookie = cookie_data;
 
