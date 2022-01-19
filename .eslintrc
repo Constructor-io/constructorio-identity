@@ -8,7 +8,7 @@
   "globals" : {
     "SERVER_ENABLED": true
   },
-  "parser": '@babel/eslint-parser',
+  "parser": "@babel/eslint-parser",
   "plugins": [ ],
   "rules": {
 
