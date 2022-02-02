@@ -17,11 +17,9 @@
     "lint": "eslint spec/*.js src/*.js",
     "coverage": "nyc --reporter=html mocha spec/",
     "postcoverage": "serve --listen 8080 coverage",
-    "test": "mocha spec/"
+    "test": "mocha spec/",
+    "prepare": "husky install"
   },
-  "pre-push": [
-    "lint"
-  ],
   "devDependencies": {
     "@babel/core": "^7.16.7",
     "@babel/eslint-parser": "^7.16.5",
@@ -29,10 +27,10 @@
     "eslint": "^8.6.0",
     "eslint-config-airbnb-base": "^14.0.0",
     "eslint-plugin-import": "^2.18.2",
+    "husky": "^7.0.4",
     "jsdom": "^15.1.1",
     "mocha": "^9.1.3",
     "nyc": "^15.1.0",
-    "pre-push": "^0.1.1",
     "serve": "^13.0.2",
     "sinon": "^7.4.2"
   }
