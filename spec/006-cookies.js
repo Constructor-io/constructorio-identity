@@ -22,6 +22,42 @@ describe('ConstructorioID', function () {
       var cookieData =  session.set_cookie('mewantcookie', 'meeatcookie');
       expect(cookieData).to.match(/mewantcookie=meeatcookie; expires=.*; path=\//);
     });
+
+    it('should create a cookie without secure flag using defaults', function () {
+      var session = new ConstructorioID();
+      var cookieData =  session.set_cookie('mewantcookie', 'meeatcookie');
+      expect(cookieData).to.not.match(/mewantcookie=meeatcookie; expires=.*; path=\/; secure/);
+    });
+
+    it('should create a cookie with secure flag', function () {
+      var session = new ConstructorioID({ cookie_secure: true });
+      var cookieData =  session.set_cookie('mewantcookie', 'meeatcookie');
+      expect(cookieData).to.match(/mewantcookie=meeatcookie; expires=.*; path=\/; secure/);
+    });
+
+    it('should create a cookie without samesite flag using defaults', function () {
+      var session = new ConstructorioID();
+      var cookieData =  session.set_cookie('mewantcookie', 'meeatcookie');
+      expect(cookieData).to.not.match(/mewantcookie=meeatcookie; expires=.*; path=\/; samesite/);
+    });
+
+    it('should create a cookie with samesite flag', function () {
+      var session = new ConstructorioID({ cookie_samesite: 'strict' });
+      var cookieData =  session.set_cookie('mewantcookie', 'meeatcookie');
+      expect(cookieData).to.match(/mewantcookie=meeatcookie; expires=.*; path=\/; samesite=strict/);
+    });
+
+    it('should create a cookie with samesite flag', function () {
+      var session = new ConstructorioID({ cookie_samesite: 'lax' });
+      var cookieData =  session.set_cookie('mewantcookie', 'meeatcookie');
+      expect(cookieData).to.match(/mewantcookie=meeatcookie; expires=.*; path=\/; samesite=lax/);
+    });
+
+    it('should create a cookie with samesite and secure flags', function () {
+      var session = new ConstructorioID({ cookie_samesite: 'strict', cookie_secure: true });
+      var cookieData =  session.set_cookie('mewantcookie', 'meeatcookie');
+      expect(cookieData).to.match(/mewantcookie=meeatcookie; expires=.*; path=\/; secure; samesite=strict/);
+    });
   });
 
   describe('get_cookie', function () {
