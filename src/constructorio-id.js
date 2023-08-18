@@ -11,6 +11,8 @@
       cookie_name_session_id: 'ConstructorioID_session_id',
       cookie_name_session_data: 'ConstructorioID_session',
       cookie_domain: null,
+      cookie_secure: null, // null, true
+      cookie_samesite: null, // null, Lax, Strict
       cookie_days_to_live: 365,
       local_name_client_id: '_constructorio_search_client_id',
       local_name_session_id: '_constructorio_search_session_id',
@@ -61,6 +63,12 @@
       var cookie_data = name + '=' + value + '; expires=' + expires.toUTCString() + '; path=/';
       if (this.cookie_domain) {
         cookie_data += '; domain=' + this.cookie_domain;
+      }
+      if (this.cookie_secure) {
+        cookie_data += '; secure';
+      }
+      if (this.cookie_samesite) {
+        cookie_data += '; samesite=' + this.cookie_samesite;
       }
       document.cookie = cookie_data;
 
