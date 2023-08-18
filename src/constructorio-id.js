@@ -19,7 +19,7 @@
       local_name_session_data: '_constructorio_search_session',
       on_node: typeof window === 'undefined',
       session_is_new: null,
-      is_new_to_beacon: null,
+      new_to_beacon: null,
       client_id_storage_location: 'cookie',
       session_id_storage_location: 'local'
     };
@@ -247,8 +247,8 @@
     this.session_is_new = sessionData && sessionDataId === sessionId ? false : true;
 
     // persist new status for when ciojs-client is instantiated before beacon
-    if (sessionData && sessionData.isNewToBeacon) {
-      this.is_new_to_beacon = true;
+    if (sessionData && sessionData.newToBeacon) {
+      this.new_to_beacon = true;
     }
 
     const storedData = {
@@ -258,7 +258,7 @@
 
     // persist new status for when ciojs-client is instantiated before beacon
     if (this.session_is_new) {
-      storedData.isNewToBeacon = true;
+      storedData.newToBeacon = true;
     }
 
     if (this.session_id_storage_location === 'local') {
