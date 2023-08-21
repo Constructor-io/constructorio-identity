@@ -107,6 +107,7 @@ describe('ConstructorioID', function () {
       expect(set_local_object.getCall(0).args[1]).to.equal(43);
       expect(set_local_object.getCall(1).args[1].sessionId).to.equal(43);
       expect(set_local_object.getCall(1).args[1].lastTime).to.be.at.least(now);
+      expect(set_local_object.getCall(1).args[1].newToBeacon).to.be.true;
 
       set_local_object.restore();
     });
@@ -126,6 +127,7 @@ describe('ConstructorioID', function () {
       expect(JSON.parse(set_cookie.getCall(0).args[1])).to.equal(43);
       expect(JSON.parse(set_cookie.getCall(1).args[1]).sessionId).to.equal(43);
       expect(JSON.parse(set_cookie.getCall(1).args[1]).lastTime).to.be.at.least(now);
+      expect(JSON.parse(set_cookie.getCall(1).args[1]).newToBeacon).to.be.true;
 
       set_cookie.restore();
     });
