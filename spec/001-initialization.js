@@ -286,6 +286,7 @@ describe('ConstructorioID', function () {
       expect(session.session_id).to.equal(43);
       expect(session.session_is_new).to.be.a('boolean');
       expect(session.session_is_new).to.equal(true);
+      expect(session.new_to_beacon).to.equal(null);
     });
 
     it('should set session_is_new to false if the session is not new and storage location is set to cookie', function () {
@@ -302,18 +303,21 @@ describe('ConstructorioID', function () {
       expect(session.session_id).to.equal(43);
       expect(session.session_is_new).to.be.a('boolean');
       expect(session.session_is_new).to.equal(true);
+      expect(session.new_to_beacon).to.equal(null);
     });
 
     it('should set session_is_new to true if there is no local storage data', function () {
       var session = new ConstructorioID();
       expect(session.session_is_new).to.be.a('boolean');
       expect(session.session_is_new).to.equal(true);
+      expect(session.new_to_beacon).to.equal(null);
     });
 
     it('should set session_is_new to true if there is no cookie data and storage location is set to cookie', function () {
       var session = new ConstructorioID({ session_id_storage_location: 'cookie' });
       expect(session.session_is_new).to.be.a('boolean');
       expect(session.session_is_new).to.equal(true);
+      expect(session.new_to_beacon).to.equal(null);
     });
 
     it('should set the user agent', function () {
@@ -363,6 +367,11 @@ describe('ConstructorioID', function () {
     it('should set node status to true', function () {
       var session = new ConstructorioID();
       expect(session.on_node).to.be.true;
+    });
+
+    it('should not set new_to_beacon', function () {
+      var session = new ConstructorioID();
+      expect(session.new_to_beacon).to.be.null;
     });
   });
 });
