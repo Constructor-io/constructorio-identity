@@ -19,6 +19,7 @@
       local_name_session_data: '_constructorio_search_session',
       on_node: typeof window === 'undefined',
       session_is_new: null,
+      new_to_beacon: null,
       client_id_storage_location: 'cookie',
       session_id_storage_location: 'local'
     };
@@ -245,20 +246,29 @@
     this.session_id = sessionId;
     this.session_is_new = sessionData && sessionDataId === sessionId ? false : true;
 
+    // persist new status for when ciojs-client is instantiated before beacon
+    if (sessionData && sessionData.newToBeacon) {
+      this.new_to_beacon = true;
+    }
+
+    const storedData = {
+      sessionId: sessionId,
+      lastTime: now
+    };
+
+    // persist new status for when ciojs-client is instantiated before beacon
+    if (this.session_is_new) {
+      storedData.newToBeacon = true;
+    }
+
     if (this.session_id_storage_location === 'local') {
       this.set_local_object(this.local_name_session_id, sessionId);
-      this.set_local_object(this.local_name_session_data, {
-        sessionId: sessionId,
-        lastTime: now
-      });
+      this.set_local_object(this.local_name_session_data, storedData);
     }
 
     if (this.session_id_storage_location === 'cookie') {
       this.set_cookie(this.cookie_name_session_id, sessionId);
-      this.set_cookie(this.cookie_name_session_data, JSON.stringify({
-        sessionId: sessionId,
-        lastTime: now
-      }));
+      this.set_cookie(this.cookie_name_session_data, JSON.stringify(storedData));
     }
 
     return sessionId;
