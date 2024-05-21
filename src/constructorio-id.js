@@ -32,6 +32,12 @@
 
         if (this.client_id_storage_location === 'cookie') {
           persisted_id = this.get_cookie(this.cookie_name_client_id);
+
+          if (persisted_id && this.cookie_domain) {
+            // Delete the existing cookie set without a domain and set the same value with a domain
+            this.delete_cookie(this.cookie_name_client_id);
+            this.set_cookie(this.cookie_name_client_id, persisted_id);
+          }
         }
 
         if (this.client_id_storage_location === 'local') {
@@ -267,6 +273,12 @@
     }
 
     if (this.session_id_storage_location === 'cookie') {
+      if (this.cookie_domain) {
+        // Delete the existing cookie set without a domain so it can be set with the same value with a domain
+        this.delete_cookie(this.cookie_name_session_id);
+        this.delete_cookie(this.cookie_name_session_data);
+      }
+
       this.set_cookie(this.cookie_name_session_id, sessionId);
       this.set_cookie(this.cookie_name_session_data, JSON.stringify(storedData));
     }
@@ -278,4 +290,5 @@
   if (typeof module !== 'undefined' && typeof require !== 'undefined') {
     module.exports = ConstructorioID;
   }
+  // window.ConstructorioID = ConstructorioID;
 })();

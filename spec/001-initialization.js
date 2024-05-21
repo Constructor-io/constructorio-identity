@@ -329,6 +329,66 @@ describe('ConstructorioID', function () {
       var session = new ConstructorioID();
       expect(session.on_node).to.be.false;
     });
+
+    describe('when used with different libraries on different subdomains', function () {
+      var dom;
+
+      beforeEach(function () {
+        dom = new jsdom.JSDOM('', {
+          url: 'http://checkout.localhost.com'
+        });
+        global.window = dom.window;
+        global.window.localStorage = helper.getStorageMock();
+        global.document = dom.window.document;
+      });
+
+      afterEach(function () {
+        delete global.window;
+        delete global.document;
+      });
+
+      it('should move client_id to the top level domain', function () {
+        // Mimic client-js being instantiated without any cookie_domain on the subdomain
+        var clientJsMock = new ConstructorioID({});
+        var clientJsMockCookie = clientJsMock.get_cookie('ConstructorioID_client_id');
+
+        // Mimic beacon being instantiated with cookie_domain on the subdomain
+        var beaconMock = new ConstructorioID({ cookie_domain: 'localhost.com'});
+        var beaconMockCookie = beaconMock.get_cookie('ConstructorioID_client_id');
+
+        dom.reconfigure({
+          url: 'http://www.localhost.com'
+        });
+
+        // Mimic beacon being instantiated with cookie_domain on another subdomain
+        var beaconMockFromMain = new ConstructorioID({ cookie_domain: 'localhost.com'});
+        var beaconMockFromMainCookie = beaconMockFromMain.get_cookie('ConstructorioID_client_id');
+
+        expect(clientJsMockCookie).to.equal(beaconMockCookie);
+        expect(beaconMockCookie).to.equal(beaconMockFromMainCookie);
+      });
+
+      it('should move session_id to the top level domain', function () {
+        // Mimic client-js being instantiated without any cookie_domain on the subdomain
+        var clientJsMock = new ConstructorioID({});
+        var clientJsMockCookie = clientJsMock.get_cookie('ConstructorioID_session_id');
+
+        // Mimic beacon being instantiated with cookie_domain on the subdomain
+        var beaconMock = new ConstructorioID({ cookie_domain: 'localhost.com'});
+        var beaconMockCookie = beaconMock.get_cookie('ConstructorioID_session_id');
+
+        dom.reconfigure({
+          url: 'http://www.localhost.com'
+        });
+
+        // Mimic beacon being instantiated with cookie_domain on another subdomain
+        var beaconMockFromMain = new ConstructorioID({ cookie_domain: 'localhost.com'});
+        var beaconMockFromMainCookie = beaconMockFromMain.get_cookie('ConstructorioID_session_id');
+
+        expect(clientJsMockCookie).to.equal(beaconMockCookie);
+        expect(beaconMockCookie).to.equal(beaconMockFromMainCookie);
+      });
+    });
   });
 
   describe('when used in node', function () {
