@@ -33,8 +33,8 @@
         if (this.client_id_storage_location === 'cookie') {
           persisted_id = this.get_cookie(this.cookie_name_client_id);
 
-          if (persisted_id && this.cookie_domain) {
-            // Delete the existing cookie set without a domain and set the same value with a domain
+          if (persisted_id) {
+            // Persist `clientId` in cookie storage to ensure update of expiry date
             this.delete_cookie(this.cookie_name_client_id);
             this.set_cookie(this.cookie_name_client_id, persisted_id);
           }
