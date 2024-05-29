@@ -274,7 +274,7 @@
 
     if (this.session_id_storage_location === 'cookie') {
       if (this.cookie_domain) {
-        // Delete the existing cookie set without a domain so it can be set with the same value with a domain
+        // If there is a cookie domain passed to the instance, delete the existing cookie so it can be set with a domain in the next code block
         this.delete_cookie(this.cookie_name_session_id);
         this.delete_cookie(this.cookie_name_session_data);
       }
