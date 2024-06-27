@@ -356,7 +356,7 @@ describe('ConstructorioID', function () {
         var beaconMock = new ConstructorioID({ cookie_domain: 'localhost.com' });
         var beaconMockCookie = beaconMock.get_cookie('ConstructorioID_client_id');
 
-        // Change domain from localhost.com to www.localhost.com
+        // Change domain from checkout.localhost.com to www.localhost.com
         dom.reconfigure({
           url: 'http://www.localhost.com'
         });
@@ -378,6 +378,7 @@ describe('ConstructorioID', function () {
         var beaconMock = new ConstructorioID({ cookie_domain: 'localhost.com', session_id_storage_location: 'cookie' });
         var beaconMockCookie = beaconMock.get_cookie('ConstructorioID_session_id');
 
+        // Change domain from checkout.localhost.com to www.localhost.com
         dom.reconfigure({
           url: 'http://www.localhost.com'
         });
