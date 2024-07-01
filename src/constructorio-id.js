@@ -32,6 +32,12 @@
 
         if (this.client_id_storage_location === 'cookie') {
           persisted_id = this.get_cookie(this.cookie_name_client_id);
+
+          if (persisted_id) {
+            // Persist `clientId` in cookie storage to ensure update of expiry date
+            this.delete_cookie(this.cookie_name_client_id);
+            this.set_cookie(this.cookie_name_client_id, persisted_id);
+          }
         }
 
         if (this.client_id_storage_location === 'local') {
@@ -267,6 +273,12 @@
     }
 
     if (this.session_id_storage_location === 'cookie') {
+      if (this.cookie_domain) {
+        // If there is a cookie domain passed to the instance, delete the existing cookie so it can be set with a domain in the next code block
+        this.delete_cookie(this.cookie_name_session_id);
+        this.delete_cookie(this.cookie_name_session_data);
+      }
+
       this.set_cookie(this.cookie_name_session_id, sessionId);
       this.set_cookie(this.cookie_name_session_data, JSON.stringify(storedData));
     }
