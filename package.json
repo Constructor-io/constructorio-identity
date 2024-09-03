@@ -3,7 +3,7 @@
   "version": "2.5.0",
   "description": "A JavaScript module for managing identity and sessions",
   "repository": "https://github.com/Constructor-io/constructorio-identity",
-  "author": "Zubin Tiku (constructor.io)",
+  "author": "Constructor.io Corporation",
   "license": "MIT",
   "main": "src/constructorio-id.js",
   "nyc": {
