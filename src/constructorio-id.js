@@ -1,7 +1,26 @@
 (function () {
   // Object.assign polyfill
   // - https://developer.mozilla.org/en/docs/Web/JavaScript/Reference/Global_Objects/Object/assign#Polyfill
-  Object.assign || Object.defineProperty(Object, 'assign', {enumerable: !1, configurable: !0, writable: !0, value: function (e) {'use strict'; if (void 0 === e || e === null) throw new TypeError('Cannot convert first argument to object'); for (var r = Object(e), t = 1; t < arguments.length; t++) {var n = arguments[t]; if (void 0 !== n && n !== null) {n = Object(n); for (var o = Object.keys(Object(n)), a = 0, c = o.length; c > a; a++) {var i = o[a], b = Object.getOwnPropertyDescriptor(n, i); void 0 !== b && b.enumerable && (r[i] = n[i]);}}} return r;}}); // eslint-disable-line
+  Object.assign || Object.defineProperty(Object, 'assign', { enumerable: !1, configurable: !0, writable: !0, value: function(e) { 'use strict'; if (void 0 === e || e === null) throw new TypeError('Cannot convert first argument to object'); for (var r = Object(e), t = 1; t < arguments.length; t++) { var n = arguments[t]; if (void 0 !== n && n !== null) { n = Object(n); for (var o = Object.keys(Object(n)), a = 0, c = o.length; c > a; a++) { var i = o[a], b = Object.getOwnPropertyDescriptor(n, i); void 0 !== b && b.enumerable && (r[i] = n[i]); } } } return r; } }); // eslint-disable-line
+
+  function storageAvailable(type) {
+    let storage;
+    try {
+      storage = window[type];
+      const x = '__storage_test__';
+      storage.setItem(x, x);
+      storage.removeItem(x);
+      return true;
+    } catch (e) {
+      return (
+        e instanceof DOMException &&
+        e.name === 'QuotaExceededError' &&
+        // acknowledge QuotaExceededError only if there's something already stored
+        storage &&
+        storage.length !== 0
+      );
+    }
+  }
 
   var ConstructorioID = function (options) {
     var defaults = {
@@ -158,8 +177,8 @@
 
   ConstructorioID.prototype.get_local_object = function (key) {
     var data;
-    var localStorage = window && window.localStorage;
-    if (localStorage && typeof key  === 'string') {
+    var localStorage = storageAvailable('localStorage') && window && window.localStorage;
+    if (localStorage && typeof key === 'string') {
       try {
         data = JSON.parse(localStorage.getItem(key));
       } catch (e) {
@@ -170,7 +189,7 @@
   };
 
   ConstructorioID.prototype.set_local_object = function (key, data) {
-    var localStorage = window && window.localStorage;
+    var localStorage = storageAvailable('localStorage') && window && window.localStorage;
 
     if (localStorage && typeof key === 'string') {
       if (typeof data === 'object') {
@@ -192,7 +211,7 @@
   };
 
   ConstructorioID.prototype.delete_local_object = function (key) {
-    var localStorage = window && window.localStorage;
+    var localStorage = storageAvailable('localStorage') && window && window.localStorage;
 
     if (localStorage && typeof key === 'string') {
       try {
