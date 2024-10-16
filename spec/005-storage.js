@@ -1,6 +1,6 @@
 var expect = require('chai').expect;
 var jsdom = require('jsdom');
-var sinon  = require('sinon');
+var sinon = require('sinon');
 var helper = require('./helper');
 var ConstructorioID = require('../src/constructorio-id.js');
 
@@ -28,6 +28,13 @@ describe('ConstructorioID', function () {
       expect(adventuretime.jake).to.be.true;
     });
 
+    it('should not throw error when localStorage is not available', function () {
+      // Delete window so accessing local storage will throw
+      delete global.window;
+      var session = new ConstructorioID();
+      expect(session.get_local_object('adventuretime')).to.not.throw;
+    });
+
     it('should not return a local string', function () {
       window.localStorage.setItem('adventuretime', 'Come on grab your friends');
       var session = new ConstructorioID();
@@ -42,6 +49,13 @@ describe('ConstructorioID', function () {
       session.set_local_object('adventuretime', { marceline: true });
       expect(window.localStorage.adventuretime).to.be.a.string;
       expect(JSON.parse(window.localStorage.adventuretime)).to.deep.equal({ marceline: true });
+    });
+
+    it('should not throw error when localStorage is not available', function () {
+      // Delete window so accessing local storage will throw
+      delete global.window;
+      var session = new ConstructorioID();
+      expect(session.set_local_object('adventuretime', 'test')).to.not.throw;
     });
   });
 

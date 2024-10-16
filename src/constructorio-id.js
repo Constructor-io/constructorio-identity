@@ -1,4 +1,4 @@
-(function() {
+(function () {
   // Object.assign polyfill
   // - https://developer.mozilla.org/en/docs/Web/JavaScript/Reference/Global_Objects/Object/assign#Polyfill
   Object.assign || Object.defineProperty(Object, 'assign', { enumerable: !1, configurable: !0, writable: !0, value: function(e) { 'use strict'; if (void 0 === e || e === null) throw new TypeError('Cannot convert first argument to object'); for (var r = Object(e), t = 1; t < arguments.length; t++) { var n = arguments[t]; if (void 0 !== n && n !== null) { n = Object(n); for (var o = Object.keys(Object(n)), a = 0, c = o.length; c > a; a++) { var i = o[a], b = Object.getOwnPropertyDescriptor(n, i); void 0 !== b && b.enumerable && (r[i] = n[i]); } } } return r; } }); // eslint-disable-line
@@ -7,14 +7,14 @@
     let storage;
     try {
       storage = window[type];
-      const x = "__storage_test__";
+      const x = '__storage_test__';
       storage.setItem(x, x);
       storage.removeItem(x);
       return true;
     } catch (e) {
       return (
         e instanceof DOMException &&
-        e.name === "QuotaExceededError" &&
+        e.name === 'QuotaExceededError' &&
         // acknowledge QuotaExceededError only if there's something already stored
         storage &&
         storage.length !== 0
@@ -22,7 +22,7 @@
     }
   }
 
-  var ConstructorioID = function(options) {
+  var ConstructorioID = function (options) {
     var defaults = {
       user_agent: null,
       persist: true,
@@ -82,7 +82,7 @@
     }
   };
 
-  ConstructorioID.prototype.set_cookie = function(name, value) {
+  ConstructorioID.prototype.set_cookie = function (name, value) {
     if (!this.on_node && this.persist) {
       var expires = new Date(Date.now() + this.cookie_days_to_live * 24 * 60 * 60 * 1000);
       var cookie_data = name + '=' + value + '; expires=' + expires.toUTCString() + '; path=/';
@@ -104,7 +104,7 @@
     return null;
   };
 
-  ConstructorioID.prototype.get_cookie = function(name) {
+  ConstructorioID.prototype.get_cookie = function (name) {
     var cookieName = name + '=';
     var cookieBits = document.cookie.split(';');
     for (var i = 0; i < cookieBits.length; i++) {
@@ -128,11 +128,11 @@
     return undefined; // eslint-disable-line
   };
 
-  ConstructorioID.prototype.delete_cookie = function(name) {
+  ConstructorioID.prototype.delete_cookie = function (name) {
     document.cookie = name + '=;expires=Thu, 01 Jan 1970 00:00:01 GMT;';
   };
 
-  ConstructorioID.prototype.generate_client_id = function() {
+  ConstructorioID.prototype.generate_client_id = function () {
     var client_id;
 
     if (!this.on_node) {
@@ -157,7 +157,7 @@
     }
 
     if (!client_id) {
-      client_id = 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
+      client_id = 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function (c) {
         var r = Math.random() * 16 | 0;
         var v = c === 'x' ? r : (r & 0x3 | 0x8);
         return v.toString(16);
@@ -175,7 +175,7 @@
     return client_id;
   };
 
-  ConstructorioID.prototype.get_local_object = function(key) {
+  ConstructorioID.prototype.get_local_object = function (key) {
     var data;
     var localStorage = storageAvailable('localStorage') && window && window.localStorage;
     if (localStorage && typeof key === 'string') {
@@ -188,7 +188,7 @@
     return data;
   };
 
-  ConstructorioID.prototype.set_local_object = function(key, data) {
+  ConstructorioID.prototype.set_local_object = function (key, data) {
     var localStorage = storageAvailable('localStorage') && window && window.localStorage;
 
     if (localStorage && typeof key === 'string') {
@@ -210,7 +210,7 @@
     }
   };
 
-  ConstructorioID.prototype.delete_local_object = function(key) {
+  ConstructorioID.prototype.delete_local_object = function (key) {
     var localStorage = storageAvailable('localStorage') && window && window.localStorage;
 
     if (localStorage && typeof key === 'string') {
@@ -222,7 +222,7 @@
     }
   };
 
-  ConstructorioID.prototype.generate_session_id = function() {
+  ConstructorioID.prototype.generate_session_id = function () {
     var cookie_persisted_session_data = this.get_cookie(this.cookie_name_session_data);
     var local_persisted_session_data = this.get_local_object(this.local_name_session_data);
     var now = Date.now();
