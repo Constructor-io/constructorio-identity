@@ -12,13 +12,18 @@
       storage.removeItem(x);
       return true;
     } catch (e) {
-      return (
-        e instanceof DOMException &&
-        e.name === 'QuotaExceededError' &&
-        // acknowledge QuotaExceededError only if there's something already stored
-        storage &&
-        storage.length !== 0
-      );
+      try {
+        return (
+          e instanceof DOMException &&
+          e.name === 'QuotaExceededError' &&
+          // acknowledge QuotaExceededError only if there's something already stored
+          storage &&
+          storage.length !== 0
+        );
+      // Catch error for domless environments where DOMException is undefined
+      } catch {
+        return false;
+      }
     }
   }
 
