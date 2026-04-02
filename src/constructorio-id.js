@@ -37,6 +37,7 @@
       cookie_secure: null, // null, true
       cookie_samesite: null, // null, Lax, Strict
       cookie_days_to_live: 365,
+      encode_cookie_values: false,
       local_name_client_id: '_constructorio_search_client_id',
       local_name_session_id: '_constructorio_search_session_id',
       local_name_session_data: '_constructorio_search_session',
@@ -89,7 +90,11 @@
   ConstructorioID.prototype.set_cookie = function (name, value) {
     if (!this.on_node && this.persist) {
       var expires = new Date(Date.now() + this.cookie_days_to_live * 24 * 60 * 60 * 1000);
-      var cookie_data = name + '=' + value + '; expires=' + expires.toUTCString() + '; path=/';
+      var finalValue = value;
+      if (this.encode_cookie_values) {
+        finalValue = encodeURIComponent(value);
+      }
+      var cookie_data = name + '=' + finalValue + '; expires=' + expires.toUTCString() + '; path=/';
       if (this.cookie_domain) {
         cookie_data += '; domain=' + this.cookie_domain;
       }

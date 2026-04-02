@@ -58,6 +58,33 @@ describe('ConstructorioID', function () {
       var cookieData =  session.set_cookie('mewantcookie', 'meeatcookie');
       expect(cookieData).to.match(/mewantcookie=meeatcookie; expires=.*; path=\/; secure; samesite=strict/);
     });
+
+    describe('when encode_cookie_values is false (default)', function () {
+      it('should not encode cookie values', function () {
+        var session = new ConstructorioID({ encode_cookie_values: false });
+        var cookieData = session.set_cookie('testcookie', 'hello world');
+        expect(cookieData).to.match(/testcookie=hello world;/);
+      });
+
+      it('should default encode_cookie_values to false', function () {
+        var session = new ConstructorioID();
+        expect(session.encode_cookie_values).to.be.false;
+      });
+    });
+
+    describe('when encode_cookie_values is true', function () {
+      it('should encode cookie values', function () {
+        var session = new ConstructorioID({ encode_cookie_values: true });
+        var cookieData = session.set_cookie('testcookie', 'hello world');
+        expect(cookieData).to.match(/testcookie=hello%20world;/);
+      });
+
+      it('should encode special characters', function () {
+        var session = new ConstructorioID({ encode_cookie_values: true });
+        var cookieData = session.set_cookie('testcookie', 'value=with;special&chars');
+        expect(cookieData).to.match(/testcookie=value%3Dwith%3Bspecial%26chars;/);
+      });
+    });
   });
 
   describe('get_cookie', function () {
@@ -82,6 +109,61 @@ describe('ConstructorioID', function () {
       var value = session.get_cookie('melikecookie');
 
       expect(value).to.match(/^omnomnom$/);
+    });
+
+    describe('when encode_cookie_values is true', function () {
+      it('should decode cookie values', function () {
+        var session = new ConstructorioID({ encode_cookie_values: true });
+        document.cookie = 'testcookie=hello%20world; expires=Tue, 19 Jan 2038 03:14:07 GMT; path=/';
+        var value = session.get_cookie('testcookie');
+        expect(value).to.equal('hello world');
+      });
+
+      it('should correctly set and get values with special characters', function () {
+        var session = new ConstructorioID({ encode_cookie_values: true });
+        var originalValue = 'value=with;special&chars?query#hash';
+        session.set_cookie('testcookie', originalValue);
+        var retrievedValue = session.get_cookie('testcookie');
+        expect(retrievedValue).to.equal(originalValue);
+      });
+
+      it('should correctly set and get JSON values', function () {
+        var session = new ConstructorioID({ encode_cookie_values: true });
+        var jsonValue = JSON.stringify({ sessionId: 42, lastTime: 1234567890 });
+        session.set_cookie('jsoncookie', jsonValue);
+        var retrievedValue = session.get_cookie('jsoncookie');
+        expect(retrievedValue).to.equal(jsonValue);
+        expect(JSON.parse(retrievedValue)).to.deep.equal({ sessionId: 42, lastTime: 1234567890 });
+      });
+
+      it('should handle values containing percent signs', function () {
+        var session = new ConstructorioID({ encode_cookie_values: true });
+        var valueWithPercent = '50% off sale';
+        session.set_cookie('testcookie', valueWithPercent);
+        var retrievedValue = session.get_cookie('testcookie');
+        expect(retrievedValue).to.equal(valueWithPercent);
+      });
+
+      it('should store and retrieve client_id correctly', function () {
+        var session = new ConstructorioID({
+          encode_cookie_values: true,
+          client_id_storage_location: 'cookie'
+        });
+        var clientId = session.client_id;
+        expect(clientId).to.match(/(\w|d|-){36}/);
+        expect(session.get_cookie('ConstructorioID_client_id')).to.equal(clientId);
+      });
+
+      it('should store and retrieve session data correctly', function () {
+        var session = new ConstructorioID({
+          encode_cookie_values: true,
+          session_id_storage_location: 'cookie'
+        });
+        var sessionDataCookie = session.get_cookie('ConstructorioID_session');
+        var sessionData = JSON.parse(sessionDataCookie);
+        expect(sessionData.sessionId).to.equal(session.session_id);
+        expect(sessionData.lastTime).to.be.a('number');
+      });
     });
   });
 
