@@ -119,9 +119,18 @@ describe('ConstructorioID', function () {
         expect(value).to.equal('hello world');
       });
 
+      it('should read existing unencoded JSON values (backwards compatibility)', function () {
+        var jsonValue = '{"sessionId":42,"lastTime":1234567890}';
+        document.cookie = 'legacycookie=' + jsonValue + '; expires=Tue, 19 Jan 2038 03:14:07 GMT; path=/';
+        var session = new ConstructorioID({ encode_cookie_values: true });
+        var retrievedValue = session.get_cookie('legacycookie');
+        expect(retrievedValue).to.equal(jsonValue);
+        expect(JSON.parse(retrievedValue)).to.deep.equal({ sessionId: 42, lastTime: 1234567890 });
+      });
+
       it('should correctly set and get values with special characters', function () {
         var session = new ConstructorioID({ encode_cookie_values: true });
-        var originalValue = 'value=with;special&chars?query#hash';
+        var originalValue = 'value=with;special,chars?query#hash,';
         session.set_cookie('testcookie', originalValue);
         var retrievedValue = session.get_cookie('testcookie');
         expect(retrievedValue).to.equal(originalValue);
@@ -150,7 +159,7 @@ describe('ConstructorioID', function () {
           client_id_storage_location: 'cookie'
         });
         var clientId = session.client_id;
-        expect(clientId).to.match(/(\w|d|-){36}/);
+        expect(clientId).to.match(/[\w-]{36}/);
         expect(session.get_cookie('ConstructorioID_client_id')).to.equal(clientId);
       });
 
