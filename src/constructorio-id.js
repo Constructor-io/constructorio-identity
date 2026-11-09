@@ -315,6 +315,8 @@
   };
 
   // export module for node or environments with module loaders, such as webpack
+  // check module.exports rather than require: esbuild rewrites require to __require
+  // and Parcel strips that shim, so a typeof require check fails there and nothing is exported
   if (typeof module !== 'undefined' && typeof module.exports !== 'undefined') {
     module.exports = ConstructorioID;
   }
