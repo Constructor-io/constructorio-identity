@@ -315,7 +315,7 @@
   };
 
   // export module for node or environments with module loaders, such as webpack
-  if (typeof module !== 'undefined' && typeof require !== 'undefined') {
+  if (typeof module !== 'undefined' && typeof module.exports !== 'undefined') {
     module.exports = ConstructorioID;
   }
 })();
